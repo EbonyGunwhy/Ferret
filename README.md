@@ -1,5 +1,6 @@
 # Running Ferret
-Ferret.py is the start-up file.
+Ferret.py is the start-up file when Ferret is used as a stand-alone application.
+LaunchFerretFromWeasel is the file that launches Ferret from a menu item in Weasel.
 
 # How to define models for use in Ferret
 The following is a description of how to define one or more models for use in Ferret using the
