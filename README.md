@@ -1,3 +1,6 @@
+# Running Ferret
+Ferret.py is the start-up file.
+
 # How to define models for use in Ferret
 The following is a description of how to define one or more models for use in Ferret using the
 Python programming language. The folder **Ferret\Developer\ModelLibrary** contains a Python file called
