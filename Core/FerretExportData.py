@@ -35,7 +35,7 @@ class FerretExportData(QWidget):
     """
 
     #signal to Ferret to prepare data for export
-    sigPrepareForDataExport = pyqtSignal(str)
+    sigPrepareForDataExport = pyqtSignal()
 
     def __init__(self):
         super().__init__()
