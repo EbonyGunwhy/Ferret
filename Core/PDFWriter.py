@@ -116,7 +116,11 @@ class PDF(FPDF):
                 #        paramList[0], paramList[1], paramList[2]))
                 #Create a row in the table
                 self.cell(col_width*3,textHeight*2, paramName.replace('\n', ''), border=1)
-                self.cell(col_width,textHeight*2, str(paramList[0]) + str(paramList[3]) , border=1)
+                
+                units = str(paramList[3])
+                if units != '%':
+                    units = ' ' + units
+                self.cell(col_width,textHeight*2, str(paramList[0]) + units, border=1)
                 
                 if paramList[1] == '' and paramList[2] == '':
                     confidenceStr = '(fixed)'
