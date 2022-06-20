@@ -417,12 +417,15 @@ class Ferret(QWidget):
         self.cmbModels.activated.connect(self.getSelectedModelObject)
         self.cmbModels.activated.connect(self.setUpModelVariableWidgits)
         self.cmbModels.activated.connect(self.UncheckFixParameterCheckBoxes)
-        self.cmbModels.activated.connect(self.configureGUIForEachModel) 
         self.cmbModels.activated.connect(lambda: self.clearOptimisedParamaterList('cmbModels')) 
         self.cmbModels.activated.connect(self.displayFitModelButton)
+        self.cmbModels.activated.connect(self.setUpConstantsGroupBox)
+        self.cmbModels.activated.connect(self.setUpParametersGroupBox)
+        self.cmbModels.activated.connect(self.configureGUIForEachModel) 
         self.cmbModels.activated.connect(self.lineGraph.plotGraph)
         self.modelHorizontalLayoutTopRow.addWidget(self.modelLabel)
         self.modelHorizontalLayoutTopRow.addWidget(self.cmbModels)
+        self.variablesGridLayout = QGridLayout()
         self.modelHorizontalLayoutTopRow.addLayout(self.variablesGridLayout)
         if self.listModelObjects is not None: 
             self.populateModelListCombo()
@@ -507,21 +510,6 @@ class Ferret(QWidget):
         self.modelHorizontalLayoutReset.addWidget(self.btnFitModel)
 
 
-    def setUpConstantsGridHeader(self):  
-        """
-        Widgets displaying constants are placed in a grid layout.  
-        This function creates the first header row in the constants grid layout.
-        """
-        self.lblConstant = QLabel("<u>Constants</u>")
-        self.lblValue = QLabel("<u>Value</u>")
-        self.lblConstant.hide()
-        self.lblValue.hide()
-        self.lblConstant.setAlignment(QtCore.Qt.AlignLeft)
-        self.lblValue.setAlignment(QtCore.Qt.AlignLeft)
-        self.constantsGridLayout.addWidget(self.lblConstant, 0, 0)
-        self.constantsGridLayout.addWidget( self.lblValue, 0, 1)
-
-
     def setUpParameterGridHeader(self): 
         """
         Widgets displaying parameters are placed in a grid layout.  
@@ -529,8 +517,8 @@ class Ferret(QWidget):
         """
         self.lblConfInt = QLabel("<u>95% Conf' Interval</u>")
         self.lblFix = QLabel("<u>Fix</u>")
-        self.lblFix.hide()
-        self.lblConfInt.hide()
+        ##self.lblFix.hide()
+        ##self.lblConfInt.hide()
         self.lblConfInt.setAlignment(QtCore.Qt.AlignRight)
         self.lblFix.setAlignment(QtCore.Qt.AlignLeft)
         self.paramGridLayout.addWidget(self.lblFix, 0, 2)
@@ -619,63 +607,81 @@ class Ferret(QWidget):
         self.lineGraph.savePlotToPDF(IMAGE_NAME)
  
 
+    def setUpConstantsGroupBox(self):
+        self.groupBoxConstants = QGroupBox('Model Constants')
+        self.groupBoxConstants.hide()
+        #Grid layout to manage constants widgets
+        self.constantsGridLayout = QGridLayout()
+        self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxConstants)
+        if len(self.currentModelObject.constantsList) > 0:
+            self.groupBoxConstants.show()
+            self.groupBoxConstants.setLayout(self.constantsGridLayout)
+            
+
+
+    def setUpParametersGroupBox(self):
+        self.groupBoxParameters = QGroupBox('Model Parameters')
+        self.groupBoxParameters.hide()
+        #Grid layout to manage parameter widgets
+        self.paramGridLayout = QGridLayout()
+        self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxParameters)
+        if len(self.currentModelObject.parameterList) > 0:
+            self.groupBoxParameters.show()
+            self.groupBoxParameters.setLayout(self.paramGridLayout)
+            self.setUpParameterGridHeader()
+
+
+    def connectLineGraphSignalsToSlots(self):
+        self.lineGraph.sigGetPlotData.connect(self.collectDataForPlotting)
+        self.lineGraph.sigGetPlotData.connect(self.buildConstantsString)
+        self.lineGraph.sigGetCurveFitData.connect(self.curveFitCollectParameterData)
+        self.lineGraph.sigGetCurveFitData.connect(self.buildConstantsString)
+        self.lineGraph.sigCurveFittingComplete.connect(lambda listResults: 
+                                                       self.postCurveFittingProcessing(listResults))
+        self.lineGraph.sigReturnOptimumParamDict.connect(lambda optParamDict:
+                                                         self.display95ConfidenceLimits(optParamDict))
+
+
+    def setUpLayoutsInModelGroupBox(self):
+        """ Creates the 3 horizontal layouts in the Model group box.
+
+        They are added to a vertical layout, which is
+        then added to the Model group box.
+       
+        One row of widgets is added to each horizontal layout. """
+
+        # modelHorizontalLayoutTopRow contains the combo boxes
+        # for selecting the model and its variables
+        self.modelHorizontalLayoutTopRow = QHBoxLayout()
+        self.modelHorizontalLayoutMiddleRow = QHBoxLayout()
+        self.modelHorizontalLayoutReset = QHBoxLayout()
+        #The above horizontal layouts are stacked in the following vertical layout
+        self.modelVerticalLayout = QVBoxLayout()
+        self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutTopRow)
+        self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutMiddleRow)
+        self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutReset)
+        self.groupBoxModel.setLayout(self.modelVerticalLayout)
+
+
     def setUpModelGroupBox(self):    
         """Creates a group box to hold widgets associated with the 
         selection of a model and for inputing/displaying that model's
         parameter data."""
         try:
             self.groupBoxModel = QGroupBox('Model Fitting')
-            self.verticalLayoutLeft.addWidget(self.groupBoxModel)
-            self.groupBoxConstants = QGroupBox('Model Constants')
-            self.groupBoxParameters = QGroupBox('Model Parameters')
             # The group box is hidden until a Model is selected.
             self.groupBoxModel.hide()
-            self.groupBoxConstants.hide()
-            self.groupBoxParameters.hide()
-        
-            # Create horizontal layouts, one row of widgets to 
-            # each horizontal layout. Then add them to a vertical layout, 
-            # then add the vertical layout to the group box
-            # modelHorizontalLayoutTopRow contains the combo boxes
-            # for selecting the model and its variables
-            self.modelHorizontalLayoutTopRow = QHBoxLayout()
-            self.variablesGridLayout = QGridLayout()
-            self.modelHorizontalLayoutMiddleRow = QHBoxLayout()
-            self.modelHorizontalLayoutReset = QHBoxLayout()
-            #The above horizontal layouts are stacked in
-            #the following vertical layout
-            self.modelVerticalLayout = QVBoxLayout()
-            self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutTopRow)
-            self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutMiddleRow)
-            self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutReset)
-
-            #Grid layout to manage constants widgets
-            self.constantsGridLayout = QGridLayout()
-            self.groupBoxConstants.setLayout(self.constantsGridLayout)
-            #Grid layout to manage parameter widgets
-            self.paramGridLayout = QGridLayout()
-            self.groupBoxParameters.setLayout(self.paramGridLayout)
-            self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxConstants)
-            self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxParameters)
+            self.verticalLayoutLeft.addWidget(self.groupBoxModel)
+ 
+            self.setUpLayoutsInModelGroupBox()
             
-            self.groupBoxModel.setLayout(self.modelVerticalLayout)
-                    
             self.setUpModelDropDownList()
 
             self.setUpResetButton()
 
-            self.setUpParameterGridHeader()
-
             self.setUpFitModelButton()
 
-            self.lineGraph.sigGetPlotData.connect(self.collectDataForPlotting)
-            self.lineGraph.sigGetPlotData.connect(self.buildConstantsString)
-            self.lineGraph.sigGetCurveFitData.connect(self.curveFitCollectParameterData)
-            self.lineGraph.sigGetCurveFitData.connect(self.buildConstantsString)
-            self.lineGraph.sigCurveFittingComplete.connect(lambda listResults: 
-                                                           self.postCurveFittingProcessing(listResults))
-            self.lineGraph.sigReturnOptimumParamDict.connect(lambda optParamDict:
-                                                             self.display95ConfidenceLimits(optParamDict))
+            self.connectLineGraphSignalsToSlots()
         except Exception as e:
             print('Error in FERRET.setUpModelGroupBox: ' + str(e)) 
             logger.error('Error in FERRET.setUpModelGroupBox: ' + str(e))
@@ -859,9 +865,7 @@ class Ferret(QWidget):
             logger.info('function FERRET curveFitCollectParameterData called.')
             parameterDataList = []
 
-            listParameterObjects = self.currentModelObject.parameterList
-
-            for paramObject in listParameterObjects:
+            for paramObject in self.currentModelObject.parameterLis:
                 paramShortName = paramObject.shortName
                 units = paramObject.units
                 upper = paramObject.upperConstraint
@@ -1076,38 +1080,37 @@ class Ferret(QWidget):
         """
         logger.info('function FERRET setUpConstantsLabelsAndWidgets called. ')
         try:
-            modelName = str(self.cmbModels.currentText())
-            listConstantsObjects = self.currentModelObject.constantsList
-            currentRow = 1
-
-            for obj in listConstantsObjects:
-                self.labelConstantName = ModelLabel(obj.shortName)
-                self.labelConstantName.show()
-                self.constantsGridLayout.addWidget(self.labelConstantName,currentRow,0, alignment=Qt.AlignBottom)
-                if len(obj.listValues) == 0:
-                    #The constant can take any decimal value
-                    self.spinBox = ModelParameterSpinBox(obj.shortName)
-                    self.spinBox.setDecimals(obj.precision)
-                    self.spinBox.setRange(obj.minValue, obj.maxValue)
-                    self.spinBox.setSingleStep(obj.stepSize)
-                    self.spinBox.setValue(obj.defaultValue)
-                    self.spinBox.valueChanged.connect(self.lineGraph.plotGraph)
-                    self.constantsGridLayout.addWidget(self.spinBox,currentRow,1, 
-                                                       alignment=Qt.AlignBottom | Qt.AlignLeft)
-                    self.constantsWidgetList.append(self.spinBox)
-                else:
-                    #The constant has a set of discrete values that 
-                    #should be displayed in a drop down list.
-                    self.comboBox = ModelComboBox(obj.shortName)
-                    self.comboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-                    self.comboBox.addItems(obj.listValues)
-                    #Display default value
-                    self.comboBox.setCurrentIndex(obj.listValues.index(str(obj.defaultValue)))
-                    self.constantsGridLayout.addWidget(self.comboBox,currentRow,1, 
-                                                       alignment=Qt.AlignBottom | Qt.AlignLeft)
-                    self.comboBox.activated.connect(self.lineGraph.plotGraph)
-                    self.constantsWidgetList.append(self.comboBox)
-                currentRow+=1
+            self.clearConstantsGridLayout()
+            if len(self.currentModelObject.constantsList) > 0:
+                currentRow = 1
+                for obj in self.currentModelObject.constantsList:
+                    self.labelConstantName = ModelLabel(obj.shortName)
+                    self.labelConstantName.show()
+                    self.constantsGridLayout.addWidget(self.labelConstantName,currentRow,0, alignment=Qt.AlignBottom)
+                    if len(obj.listValues) == 0:
+                        #The constant can take any decimal value
+                        self.spinBox = ModelParameterSpinBox(obj.shortName)
+                        self.spinBox.setDecimals(obj.precision)
+                        self.spinBox.setRange(obj.minValue, obj.maxValue)
+                        self.spinBox.setSingleStep(obj.stepSize)
+                        self.spinBox.setValue(obj.defaultValue)
+                        self.spinBox.valueChanged.connect(self.lineGraph.plotGraph)
+                        self.constantsGridLayout.addWidget(self.spinBox,currentRow,1, 
+                                                           alignment=Qt.AlignBottom | Qt.AlignLeft)
+                        self.constantsWidgetList.append(self.spinBox)
+                    else:
+                        #The constant has a set of discrete values that 
+                        #should be displayed in a drop down list.
+                        self.comboBox = ModelComboBox(obj.shortName)
+                        self.comboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+                        self.comboBox.addItems(obj.listValues)
+                        #Display default value
+                        self.comboBox.setCurrentIndex(obj.listValues.index(str(obj.defaultValue)))
+                        self.constantsGridLayout.addWidget(self.comboBox,currentRow,1, 
+                                                           alignment=Qt.AlignBottom | Qt.AlignLeft)
+                        self.comboBox.activated.connect(self.lineGraph.plotGraph)
+                        self.constantsWidgetList.append(self.comboBox)
+                    currentRow+=1
         except Exception as e:
             print('Error in function FERRET setUpConstantsLabelsAndWidgets: ' + str(e) )
             logger.error('Error in function FERRET setUpConstantsLabelsAndWidgets: ' + str(e) )
@@ -1121,39 +1124,38 @@ class Ferret(QWidget):
         """
         logger.info('function FERRET SetUpParameterLabelsAndSpinBoxes called. ')
         try:
-            modelName = str(self.cmbModels.currentText())
-            listParameterObjects = self.currentModelObject.parameterList
-            currentRow = 1
+            self.clearParameterGridLayout()
+            if len(self.currentModelObject.parameterList) > 0:
+                currentRow = 1
+                for obj in self.currentModelObject.parameterList:
+                    self.labelParamName = ModelLabel(obj.shortName)
+                    self.labelParamName.show()
+                    self.spinBox = ModelParameterSpinBox(obj.shortName)
+                    self.spinBox.setDecimals(obj.precision)
+                    self.spinBox.setRange(obj.minValue, obj.maxValue)
+                    self.spinBox.setSingleStep(obj.stepSize)
+                    self.spinBox.setValue(obj.defaultValue)
+                    self.spinBox.valueChanged.connect(self.lineGraph.plotGraph)
+                    self.spinBox.valueChanged.connect(self.OptimumParameterChanged)
+                    if obj.units == "%":
+                        self.spinBox.setSuffix('%')
+                    else:
+                        self.spinBox.setSuffix('')
 
-            for obj in listParameterObjects:
-                self.labelParamName = ModelLabel(obj.shortName)
-                self.labelParamName.show()
-                self.spinBox = ModelParameterSpinBox(obj.shortName)
-                self.spinBox.setDecimals(obj.precision)
-                self.spinBox.setRange(obj.minValue, obj.maxValue)
-                self.spinBox.setSingleStep(obj.stepSize)
-                self.spinBox.setValue(obj.defaultValue)
-                self.spinBox.valueChanged.connect(self.lineGraph.plotGraph)
-                self.spinBox.valueChanged.connect(self.OptimumParameterChanged)
-                if obj.units == "%":
-                    self.spinBox.setSuffix('%')
-                else:
-                    self.spinBox.setSuffix('')
+                    self.chkBox = ModelParameterCheckBox(obj.shortName)
+                    self.chkBox.setChecked(False)
 
-                self.chkBox = ModelParameterCheckBox(obj.shortName)
-                self.chkBox.setChecked(False)
+                    self.labelConfLimits = ModelParameterConfLimits(obj.shortName)
 
-                self.labelConfLimits = ModelParameterConfLimits(obj.shortName)
-
-                self.parameterSpinBoxList.append(self.spinBox)
-                self.parameterFixedCheckBoxList.append(self.chkBox)
-                self.parameterIntervalLimitList.append(self.labelConfLimits)
+                    self.parameterSpinBoxList.append(self.spinBox)
+                    self.parameterFixedCheckBoxList.append(self.chkBox)
+                    self.parameterIntervalLimitList.append(self.labelConfLimits)
                 
-                self.paramGridLayout.addWidget(self.labelParamName,currentRow,0, alignment=Qt.AlignBottom)
-                self.paramGridLayout.addWidget(self.spinBox,currentRow,1, alignment=Qt.AlignBottom )
-                self.paramGridLayout.addWidget(self.chkBox,currentRow,2, alignment=Qt.AlignBottom)
-                self.paramGridLayout.addWidget(self.labelConfLimits,currentRow,3, alignment=Qt.AlignBottom )
-                currentRow+=1
+                    self.paramGridLayout.addWidget(self.labelParamName,currentRow,0, alignment=Qt.AlignBottom)
+                    self.paramGridLayout.addWidget(self.spinBox,currentRow,1, alignment=Qt.AlignBottom )
+                    self.paramGridLayout.addWidget(self.chkBox,currentRow,2, alignment=Qt.AlignBottom)
+                    self.paramGridLayout.addWidget(self.labelConfLimits,currentRow,3, alignment=Qt.AlignBottom )
+                    currentRow+=1
          
         except Exception as e:
             print('Error in function FERRET SetUpParameterLabelsAndSpinBoxes: ' + str(e) )
@@ -1179,15 +1181,16 @@ class Ferret(QWidget):
         This function removes the widgets displaying parameter data from the GUI
         and from the lists containing them.
         """
-        while self.paramGridLayout.count():
-            child = self.paramGridLayout.takeAt(0)
-            if child.widget():
-                 child.widget().deleteLater()
-        #rewrite header row
-        self.setUpParameterGridHeader()
-        self.parameterSpinBoxList = []
-        self.parameterFixedCheckBoxList = []
-        self.parameterIntervalLimitList = []
+        if self.paramGridLayout is not None:
+            while self.paramGridLayout.count():
+                child = self.paramGridLayout.takeAt(0)
+                if child.widget():
+                        child.widget().deleteLater()
+            #rewrite header row
+            self.setUpParameterGridHeader()
+            self.parameterSpinBoxList = []
+            self.parameterFixedCheckBoxList = []
+            self.parameterIntervalLimitList = []
 
 
     def clearConstantsGridLayout(self):
@@ -1195,11 +1198,16 @@ class Ferret(QWidget):
         This function removes the widgets displaying constant data from the GUI
         and from the list containing them.
         """
-        while self.constantsGridLayout.count():
-            child = self.constantsGridLayout.takeAt(0)
-            if child.widget():
-                 child.widget().deleteLater()
-        self.constantsWidgetList = []
+        try:
+            if self.constantsGridLayout is not None:
+                while self.constantsGridLayout.count():
+                    child = self.constantsGridLayout.takeAt(0)
+                    if child.widget():
+                            child.widget().deleteLater()
+                self.constantsWidgetList = []
+        except Exception as e:
+            print('Error in function FERRET clearConstantsGridLayout: ' + str(e) )
+            logger.error('Error in function FERRET clearConstantsGridLayout: ' + str(e) )
 
 
     def configureGUIForEachModel(self):
@@ -1210,21 +1218,18 @@ class Ferret(QWidget):
         try:
             modelName = str(self.cmbModels.currentText())
             logger.info('function FERRET configureGUIForEachModel called when model = ' + modelName)   
-            self.clearParameterGridLayout()
-            self.clearConstantsGridLayout()
             
             #Configure parameter spinboxes and their labels for each model
             if modelName == FerretConstants.PLEASE_SELECT:
                 self.btnFitModel.hide()
                 self.groupBoxExport.setExportGroupBoxVisible(False)
-                self.groupBoxConstants.hide()
-                self.groupBoxParameters.hide()
+                if self.groupBoxConstants is not None:
+                    self.groupBoxConstants.hide()
+                if self.groupBoxParameters is not None:
+                    self.groupBoxParameters.hide()
             else:
-                self.lblConfInt.show()
-                self.lblFix.show()
-                self.groupBoxConstants.show()
-                self.groupBoxParameters.show()
-                self.setUpConstantsLabelsAndWidgets()
+                ##self.groupBoxConstants.show()
+##               self.setUpConstantsLabelsAndWidgets()
                 self.SetUpParameterLabelsAndSpinBoxes()
                 self.btnReset.show()
         except Exception as e:
@@ -1233,15 +1238,14 @@ class Ferret(QWidget):
 
 
 def main():
-    from MyModels import returnDataFileFolder
-    from MyModels import returnModelList
+    from SimpleModels import returnDataFileFolder
+    #from MyModels import returnModelList
     import StyleSheet as styleSheet
     os.chdir(os.path.dirname(sys.argv[0]))
     app = QApplication(sys.argv )
     window = QMainWindow()
     ferretWidget = Ferret(statusBar=window.statusBar(),
-                         dataFileFolder=returnDataFileFolder(),
-                         modelList=returnModelList())
+                         dataFileFolder=returnDataFileFolder()) #, modelList=returnModelList()
     window.setCentralWidget(ferretWidget)
     window.setStyleSheet(styleSheet.TRISTAN_GREY)
     window.showMaximized()

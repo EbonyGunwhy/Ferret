@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs
+/Developer/ModelLibrary/SupportModules/__pycache__
+/Developer/ModelLibrary/__pycache__

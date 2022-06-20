@@ -237,11 +237,11 @@ class FerretPlotData(LineGraph):
             
             QApplication.setOverrideCursor(QCursor(QtCore.Qt.WaitCursor))
             objModel = Model(self._currentModelObject.modelFunction, \
-            independent_vars=['xData2DArray', 'constantsString'])
+            independent_vars=['inputData', 'constantsString'])
 
             bestFitResults = objModel.fit(data=arrayFitCurveToSignals, 
                                   params=modelParams, 
-                                  xData2DArray=timeInputConcs2DArray, 
+                                  inputData=timeInputConcs2DArray, 
                                   constantsString=self._constantsString)
             self.sigCurveFittingComplete.emit(bestFitResults.best_values)
             QApplication.restoreOverrideCursor()

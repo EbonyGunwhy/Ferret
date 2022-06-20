@@ -22,14 +22,14 @@ from SupportModules.GraphSupport import LineColours
 #*************************************************************************************
 #** Model 1 Definition
 #*************************************************************************************
-def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString):
+def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsString):
     """This function contains the algorithm for calculating 
     how MR signal from a 2D scan varies with time using the 
     High Flow Single Inlet Two Compartment Gadoxetate Model.
         
         Input Parameters
         ----------------
-            xData2DArray - time and AIF concentration 1D arrays 
+            inputData - time and AIF concentration 1D arrays 
                 stacked into one 2D array.
             Ve - Plasma Volume Fraction (decimal fraction).
             Khe - Hepatocyte Uptake Rate (mL/min/mL)
@@ -42,8 +42,8 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constant
             time points in array 'time'.
     """ 
     try:
-        t = xData2DArray[:,0]
-        Sa = xData2DArray[:,1]
+        t = inputData[:,0]
+        Sa = inputData[:,1]
          # Unpack SPGR model constants from 
         # a string representation of a dictionary
         # of constants and their values
@@ -88,14 +88,14 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constant
 #*************************************************************************************
 #** model 2 definition
 #************************************************************************************
-def HighFlowSingleInletGadoxetate3DSPGR_Rat(xData2DArray,Ve, Kbh, Khe,constantsString):
+def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsString):
     """This function contains the algorithm for calculating 
        how the MR signal from a 3D scan varies with time using the 
        High Flow Single Inlet Two Compartment Gadoxetate Model.
         
             Input Parameters
             ----------------
-                xData2DArray - time and AIF concentration 1D arrays 
+                inputData - time and AIF concentration 1D arrays 
                     stacked into one 2D array.
                 Ve - Plasma Volume Fraction (decimal fraction).
                 Khe - Hepatocyte Uptake Rate (mL/min/mL)
@@ -109,8 +109,8 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(xData2DArray,Ve, Kbh, Khe,constantsS
     #try:
         #exceptionHandler.modelFunctionInfoLogger()
     try:
-        t = xData2DArray[:,0]
-        Sa = xData2DArray[:,1]
+        t = inputData[:,0]
+        Sa = inputData[:,1]
         # Unpack SPGR model constants from 
         # a string representation of a dictionary
         # of constants and their values

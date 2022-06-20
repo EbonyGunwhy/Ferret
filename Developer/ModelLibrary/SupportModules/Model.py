@@ -41,6 +41,14 @@ class Model:
         self._modelFunction = modelFunction #function containing the mathematical model
 
 
+    def getNumberConstants(self):
+        return len(self._constantsList)
+
+
+    def getNumberParameters(self):
+        return len(self._parameterList)
+
+
     def getNameOfCurveToFitTo(self): 
         """
         This function returns the name of the variable, whose curve the model
