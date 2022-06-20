@@ -388,6 +388,7 @@ class Ferret(QWidget):
             self.loadDataWidget = FerretLoadData(self.listModelObjects, self.dataFileFolder)
             self.verticalLayoutLeft.addWidget(self.loadDataWidget)
             self.loadDataWidget.sigClearGUI.connect(self.HideAllControlsOnGUI)
+            self.loadDataWidget.sigClearGUI.connect(self.lineGraph.clearGraph)
             self.loadDataWidget.sigReturnList.connect(lambda modelList:
                                                     self.setListModelObjects(modelList))
             self.loadDataWidget.sigReturnList.connect(self.populateModelListCombo)
@@ -419,10 +420,7 @@ class Ferret(QWidget):
         self.cmbModels.activated.connect(self.UncheckFixParameterCheckBoxes)
         self.cmbModels.activated.connect(lambda: self.clearOptimisedParamaterList('cmbModels')) 
         self.cmbModels.activated.connect(self.displayFitModelButton)
-        self.cmbModels.activated.connect(self.setUpConstantsGroupBox)
-        self.cmbModels.activated.connect(self.setUpParametersGroupBox)
         self.cmbModels.activated.connect(self.configureGUIForEachModel) 
-        self.cmbModels.activated.connect(self.lineGraph.plotGraph)
         self.modelHorizontalLayoutTopRow.addWidget(self.modelLabel)
         self.modelHorizontalLayoutTopRow.addWidget(self.cmbModels)
         self.variablesGridLayout = QGridLayout()
@@ -506,7 +504,7 @@ class Ferret(QWidget):
         self.btnFitModel.setMaximumSize(QtCore.QSize(130,45))
         self.btnFitModel.setToolTip('Fit the selected model to the data')
         self.btnFitModel.hide()
-        self.btnFitModel.clicked.connect(self.lineGraph.CurveFit)
+        self.btnFitModel.clicked.connect(self.lineGraph.curveFit)
         self.modelHorizontalLayoutReset.addWidget(self.btnFitModel)
 
 
@@ -517,8 +515,6 @@ class Ferret(QWidget):
         """
         self.lblConfInt = QLabel("<u>95% Conf' Interval</u>")
         self.lblFix = QLabel("<u>Fix</u>")
-        ##self.lblFix.hide()
-        ##self.lblConfInt.hide()
         self.lblConfInt.setAlignment(QtCore.Qt.AlignRight)
         self.lblFix.setAlignment(QtCore.Qt.AlignLeft)
         self.paramGridLayout.addWidget(self.lblFix, 0, 2)
@@ -613,11 +609,8 @@ class Ferret(QWidget):
         #Grid layout to manage constants widgets
         self.constantsGridLayout = QGridLayout()
         self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxConstants)
-        if len(self.currentModelObject.constantsList) > 0:
-            self.groupBoxConstants.show()
-            self.groupBoxConstants.setLayout(self.constantsGridLayout)
+        self.groupBoxConstants.setLayout(self.constantsGridLayout)
             
-
 
     def setUpParametersGroupBox(self):
         self.groupBoxParameters = QGroupBox('Model Parameters')
@@ -625,10 +618,8 @@ class Ferret(QWidget):
         #Grid layout to manage parameter widgets
         self.paramGridLayout = QGridLayout()
         self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxParameters)
-        if len(self.currentModelObject.parameterList) > 0:
-            self.groupBoxParameters.show()
-            self.groupBoxParameters.setLayout(self.paramGridLayout)
-            self.setUpParameterGridHeader()
+        self.groupBoxParameters.setLayout(self.paramGridLayout)
+        self.setUpParameterGridHeader()
 
 
     def connectLineGraphSignalsToSlots(self):
@@ -674,6 +665,10 @@ class Ferret(QWidget):
             self.verticalLayoutLeft.addWidget(self.groupBoxModel)
  
             self.setUpLayoutsInModelGroupBox()
+
+            self.setUpConstantsGroupBox()
+
+            self.setUpParametersGroupBox()
             
             self.setUpModelDropDownList()
 
@@ -950,8 +945,12 @@ class Ferret(QWidget):
             if self.statusBar is not None: 
                 self.statusBar.clearMessage()
             self.groupBoxModel.hide()
+            self.groupBoxConstants.hide()
+            self.groupBoxParameters.hide()
+            self.deleteVariableWidgets()
             self.groupBoxExport.setExportGroupBoxVisible(False)
             self.btnFitModel.hide()
+            self.btnReset.hide()
         except Exception as e:
             print('Error in function FERRET HideAllControlsOnGUI: ' + str(e))
             logger.error('Error in function FERRET HideAllControlsOnGUI: ' + str(e))
@@ -1221,16 +1220,22 @@ class Ferret(QWidget):
             
             #Configure parameter spinboxes and their labels for each model
             if modelName == FerretConstants.PLEASE_SELECT:
+                self.lineGraph.clearPlot()
                 self.btnFitModel.hide()
+                self.btnReset.hide()
                 self.groupBoxExport.setExportGroupBoxVisible(False)
-                if self.groupBoxConstants is not None:
-                    self.groupBoxConstants.hide()
-                if self.groupBoxParameters is not None:
-                    self.groupBoxParameters.hide()
+                ##if self.groupBoxConstants is not None:
+                self.groupBoxConstants.hide()
+                ##if self.groupBoxParameters is not None:
+                self.groupBoxParameters.hide()
             else:
-                ##self.groupBoxConstants.show()
-##               self.setUpConstantsLabelsAndWidgets()
+                if len(self.currentModelObject.constantsList) > 0:
+                    self.groupBoxConstants.show()
+                if len(self.currentModelObject.parameterList) > 0:
+                    self.groupBoxParameters.show()
+                self.setUpConstantsLabelsAndWidgets()
                 self.SetUpParameterLabelsAndSpinBoxes()
+                self.lineGraph.plotGraph()
                 self.btnReset.show()
         except Exception as e:
             print('Error in function FERRET configureGUIForEachModel: ' + str(e) )

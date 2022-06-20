@@ -111,6 +111,10 @@ class FerretPlotData(LineGraph):
         self._parameterList = paramList
 
 
+    def clearGraph(self):
+        self.clearPlot()
+
+
     def plotGraph(self):  
         """
         This function plots the normalised signal against time curves 
@@ -201,7 +205,7 @@ class FerretPlotData(LineGraph):
             print("Error in FerretPlotData.plotModel: " + str(e))
 
 
-    def CurveFit(self): 
+    def curveFit(self): 
         """
         This function fits the signal/time curve calculated by 
         the model to a signal/time curve of experimental data.
@@ -245,7 +249,7 @@ class FerretPlotData(LineGraph):
                                   constantsString=self._constantsString)
             self.sigCurveFittingComplete.emit(bestFitResults.best_values)
             QApplication.restoreOverrideCursor()
-            logger.info('CurveFit returned optimum parameters {}'
+            logger.info('curveFit returned optimum parameters {}'
                         .format(bestFitResults.best_values))
             # Plot the best curve on the graph
             self.plotGraph()
@@ -257,11 +261,11 @@ class FerretPlotData(LineGraph):
                 self._CurveFitCalculate95ConfidenceLimits(numDataPoints, numParams, 
                                     bestFitResults.best_values, bestFitResults.covar)
         except ValueError as ve:
-            print ('Value Error: CurveFit with model ' + modelName + ': '+ str(ve))
-            logger.error('Value Error: CurveFit with model ' + modelName + ': '+ str(ve))
+            print ('Value Error: curveFit with model ' + modelName + ': '+ str(ve))
+            logger.error('Value Error: curveFit with model ' + modelName + ': '+ str(ve))
         except Exception as e:
-            print('Error in function FerretPlotData.CurveFit with model ' + modelName + ': ' + str(e))
-            logger.error('Error in function FerretPlotData.CurveFit with model ' + modelName + ': ' + str(e))
+            print('Error in function FerretPlotData.curveFit with model ' + modelName + ': ' + str(e))
+            logger.error('Error in function FerretPlotData.curveFit with model ' + modelName + ': ' + str(e))
    
 
     def _CurveFitCalculate95ConfidenceLimits(self, numDataPoints: int, 

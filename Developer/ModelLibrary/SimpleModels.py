@@ -53,10 +53,10 @@ def setUpVariablesForLinearModel():
     populate the variablesList argument. 
     """
     variablesList = []
-    X = ModelVariable('X', 'X', LineColours.blueLine, True, False)
+    X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
     variablesList.append(X)
 
-    X2 = ModelVariable('X2', 'X2', LineColours.redLine, False, True)
+    X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
     variablesList.append(X2)
     return variablesList
 
