@@ -5,3 +5,6 @@
 /.vs
 /Developer/ModelLibrary/SupportModules/__pycache__
 /Developer/ModelLibrary/__pycache__
+Ferret.log
+/Core/__pycache__
+
