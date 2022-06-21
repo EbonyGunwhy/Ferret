@@ -114,7 +114,7 @@ In order to make a simple linear model available for use in Ferret, such as
     where a and b are parameters.
    
 the following steps must be followed.
-The full implementation of this model can be found in the folder **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Write a function that executes the mathematical model.  
 
@@ -138,54 +138,53 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
 
 3. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
 
-
-    def setUpParametersForLinearMode():
-        paramList = []
-        a = ModelParameter(shortName='a',
-                            longName='a',
-                            units='mL/min/mL', 
-                            defaultValue=1.0, 
-                            stepSize=1, 
-                            precision=1, 
-                            minValue=1, 
-                            maxValue=100.0)
-        paramList.append(a)    
-        b = ModelParameter(shortName='b',
-                            longName='b',
-                            units='mL/min/mL', 
-                            defaultValue=2, 
-                            stepSize=1, 
-                            precision=1, 
-                            minValue=1, 
-                            maxValue=100.0)
-        paramList.append(b)    
-        return paramList
+        def setUpParametersForLinearMode():
+            paramList = []
+            a = ModelParameter(shortName='a',
+                                longName='a',
+                                units='mL/min/mL', 
+                                defaultValue=1.0, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(a)    
+            b = ModelParameter(shortName='b',
+                                longName='b',
+                                units='mL/min/mL', 
+                                defaultValue=2, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(b)    
+            return paramList
 
 4. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
     
-    def setUpVariablesForAllModels():
-        variablesList = []
-        X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
-        variablesList.append(X)
+        def setUpVariablesForAllModels():
+            variablesList = []
+            X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
+            variablesList.append(X)
 
-        X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
-        variablesList.append(X2)
-        return variablesList
+            X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
+            variablesList.append(X2)
+            return variablesList
 
 
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
-    '''
+    
     HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
                      longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
                      modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
                      parameterList = setUpParameters(), 
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables())
-    '''
-    The functions **HighFlowSingleInletGadoxetate2DSPGR_Rat**, **setUpParameters**, **setUpConstants** & 
-    **setUpVariables** are defined outside the class.
-    **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
-    respectively.
+    
+The functions **HighFlowSingleInletGadoxetate2DSPGR_Rat**, **setUpParameters**, **setUpConstants** & 
+**setUpVariables** are defined outside the class.
+**setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
+respectively.
 
 
 For example, in the following code snippet a variable object called *regionOfInterest* is created,
