@@ -242,8 +242,10 @@ class FerretPlotData(LineGraph):
             modelInputValue = self._currentModelObject.getValueOfInputVariableToModel()
             arrayModelInputSignals = np.array(self._signalData[modelInputValue], dtype='float')
 
-            timeInputConcs2DArray = np.column_stack((self.arrayTimes, 
-                                                         arrayModelInputSignals))
+            if self._currentModelObject.xDataInputOnly:
+                timeInputConcs2DArray = self.arrayTimes
+            else:
+                timeInputConcs2DArray = np.column_stack((self.arrayTimes, arrayModelInputSignals))
             
             QApplication.setOverrideCursor(QCursor(QtCore.Qt.WaitCursor))
             objModel = Model(self._currentModelObject.modelFunction, \

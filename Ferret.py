@@ -860,7 +860,7 @@ class Ferret(QWidget):
             logger.info('function FERRET curveFitCollectParameterData called.')
             parameterDataList = []
 
-            for paramObject in self.currentModelObject.parameterLis:
+            for paramObject in self.currentModelObject.parameterList:
                 paramShortName = paramObject.shortName
                 units = paramObject.units
                 upper = paramObject.upperConstraint
