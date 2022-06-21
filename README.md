@@ -60,9 +60,11 @@ the following steps must be followed.
 
 1. Write a function that executes the mathematical model.  
 
+
     import numpy as np
     def linearModel(x, a, b, constantsString=None):
          return np.multiply(x,a) + b
+         
          
  2. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
