@@ -65,13 +65,15 @@ the following steps must be followed.
          return np.multiply(x,a) + b
          
  2. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
- 
-        linear = Model(shortName='Linear', 
+        def returnModelList():
+            linear = Model(shortName='Linear', 
                      longName ='Linear', 
                      xDataInputOnly = True,
                      modelFunction = linearModel,
                      parameterList = setUpParametersForLinearModel(), 
                      variablesList = setUpVariablesForAllModels())
+                     
+            return [linear]
                      
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
