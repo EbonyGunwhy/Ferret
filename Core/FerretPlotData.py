@@ -138,7 +138,8 @@ class FerretPlotData(LineGraph):
     def calculateAndPlotModelCurve(self, modelFunction, 
                        arrayTimes, 
                        arrayModelInputSignals, 
-                       parameterArray):
+                       parameterArray,
+                       xDataInputOnly=False):
         """
         Using the function, modelFunction, and its inputs:
          arrayModelInputSignals
@@ -156,7 +157,11 @@ class FerretPlotData(LineGraph):
         """
         try:
             logger.info('calculateAndPlotModelCurve called')
-            timeInputConcs2DArray = np.column_stack((arrayTimes, arrayModelInputSignals))
+
+            if xDataInputOnly:
+                timeInputConcs2DArray = arrayTimes
+            else:
+                timeInputConcs2DArray = np.column_stack((arrayTimes, arrayModelInputSignals))
                     
             listModelConcentrations = modelFunction(timeInputConcs2DArray, *parameterArray, self._constantsString)
             if listModelConcentrations is not None:
@@ -200,7 +205,8 @@ class FerretPlotData(LineGraph):
                     self.calculateAndPlotModelCurve(self._currentModelObject.modelFunction, 
                                                                 self.arrayTimes, 
                                                                 arrayModelInputSignals,  
-                                                                self._parameterList)  
+                                                                self._parameterList,
+                                                                self._currentModelObject.xDataInputOnly)  
         except Exception as e:
             print("Error in FerretPlotData.plotModel: " + str(e))
 

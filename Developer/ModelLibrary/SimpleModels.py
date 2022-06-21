@@ -72,6 +72,7 @@ def returnModelList():
     """
     Linear = Model(shortName='Linear', 
                      longName ='Linear', 
+                     xDataInputOnly = True,
                      modelFunction = linear,
                      parameterList = setUpParametersForLinearModel(), 
                      variablesList = setUpVariablesForLinearModel()

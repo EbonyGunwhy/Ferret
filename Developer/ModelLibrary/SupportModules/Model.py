@@ -22,6 +22,9 @@ class Model:
     modelFunction - a function containing the logic of the mathematical model
                 passed into the model object as an object
 
+    xDataInputOnly - boolean indicating if the only input to the model is x axis data.
+                Default is False, both x and y axis data are input to the model.
+
     parameterList - list of parameter objects that describe each of the
                 parameters associated with the model
 
@@ -31,15 +34,59 @@ class Model:
     variablesList - list of the variable objects that describe each of the variables
                 associated with the model
     """
-    def __init__(self, shortName, longName, modelFunction,
+    def __init__(self, shortName, longName, modelFunction, xDataInputOnly=False,
                  parameterList=[], constantsList=[], variablesList=[]):
         self._shortName = shortName
         self._longName = longName
+        self._xDataInputOnly = xDataInputOnly
         self._parameterList = parameterList #list of parameter objects
         self._constantsList = constantsList #list of parameter objects
         self._variablesList = variablesList #list of variable objects
         self._modelFunction = modelFunction #function containing the mathematical model
 
+    def __repr__(self):
+        """Represents this class's objects as a string"""
+        return 'Model object for Model {}, {}'.format(self._shortName, self._longName)
+
+    @property
+    def shortName(self):
+         return self._shortName
+
+    @property
+    def longName(self):
+         return self._longName
+
+    @property
+    def xDataInputOnly(self):
+        return self._xDataInputOnly
+
+    @property
+    def parameterList(self):
+        return self._parameterList
+
+    @parameterList.setter
+    def parameterList(self, value):
+       self._parameterList = value
+
+    @property
+    def constantsList(self):
+        return self._constantsList
+
+    @constantsList.setter
+    def constantsList(self, value):
+       self._constantsList = value
+
+    @property
+    def variablesList(self):
+        return self._variablesList
+
+    @variablesList.setter
+    def variablesList(self, value):
+       self._variablesList = value
+
+    @property
+    def modelFunction(self):
+        return self._modelFunction
 
     def getNumberConstants(self):
         return len(self._constantsList)
@@ -113,47 +160,6 @@ class Model:
         for param in self._parameterList:
             if param.shortName == shortName:
                 return param.units
-
-
-    def __repr__(self):
-        """Represents this class's objects as a string"""
-        return 'Model object for Model {}, {}'.format(self._shortName, self._longName)
-
-    @property
-    def shortName(self):
-         return self._shortName
-
-    @property
-    def longName(self):
-         return self._longName
-
-    @property
-    def parameterList(self):
-        return self._parameterList
-
-    @parameterList.setter
-    def parameterList(self, value):
-       self._parameterList = value
-
-    @property
-    def constantsList(self):
-        return self._constantsList
-
-    @constantsList.setter
-    def constantsList(self, value):
-       self._constantsList = value
-
-    @property
-    def variablesList(self):
-        return self._variablesList
-
-    @variablesList.setter
-    def variablesList(self, value):
-       self._variablesList = value
-
-    @property
-    def modelFunction(self):
-        return self._modelFunction
 
    
 class ModelVariable:
