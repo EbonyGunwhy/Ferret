@@ -120,8 +120,8 @@ The full implementation of this model can be found in the folder  **Ferret\Devel
 These 2 module imports are mandatory for model definition. Although *LineColours*
 will only be mandatory if you need to define model parameter(s).
     
-    from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
-    from SupportModules.GraphSupport import LineColours
+        from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+        from SupportModules.GraphSupport import LineColours
 
 
 3. Write a function that executes the mathematical model.  
