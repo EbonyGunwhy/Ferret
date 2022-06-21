@@ -11,9 +11,9 @@ LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in W
 The menu item **Ferret** will be created below a horizontal separater line.
 
 # How to define models for use in Ferret
-The following is a description of how to define one or more models for use in Ferret using the
-Python programming language. The folder **Ferret\Developer\ModelLibrary** contains a Python file called
-*MyModels.py* that contains the definition of two models.  This model library file may be cloned 
+The following is a description of how to define one or more models, using the
+Python programming language, for use in Ferret . The folder **Ferret\Developer\ModelLibrary** contains a Python model library file called
+*SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
 and edited to produce more model libraries.
 
 It is assumed that the person carrying out this work is an experienced Python developer.
@@ -21,6 +21,7 @@ It is assumed that the person carrying out this work is an experienced Python de
 ## Background
 The folder **Ferret\Developer\ModelLibrary\SupportModules** contains a Python class module called *Model.py*.
 
+### Model class
 Within *Model.py* there is a definition of the class *Model* that describes a mathematical model. 
 As well as storing the long & short names of the model, this class stores name of the external function, 
 that contains the logic of the mathematical model. 
@@ -39,7 +40,8 @@ when a model object is created.
     longName - the model's full name.
     modelFunction - a function containing the logic of the mathematical model
                 passed into the model object as an object
-
+    xDataInputOnly - boolean indicating if the only input to the model is x axis data.
+                Default is False, both x and y axis data are input to the model.
     parameterList - list of parameter objects that describe each of the
                 parameters associated with the model. This argument is optional.
 
@@ -49,21 +51,7 @@ when a model object is created.
     variablesList - list of the variable objects that describe each of the variables
                 associated with the model. This argument is optional.
 
-For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
-    '''
-    HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
-                     longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
-                     modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
-                     parameterList = setUpParameters(), 
-                     constantsList = setUpConstants(),
-                     variablesList = setUpVariables())
-    '''
-    The functions **HighFlowSingleInletGadoxetate2DSPGR_Rat**, **setUpParameters**, **setUpConstants** & 
-    **setUpVariables** are defined outside the class.
-    **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
-    respectively.
-
-### Model Variable
+### Model Variable class
 The *ModelVariable* class has properties that are set by the following input arguments 
 when a model variable object is created.
 
@@ -74,25 +62,12 @@ when a model variable object is created.
     fitCurveTo - boolean indicating if the model to fit to the curve of this variable
                     plotted on a graph.
 
-For example, in the following code snippet a variable object called *regionOfInterest* is created,
-    '''
-    regionOfInterest = ModelVariable('ROI', 'Region of Interest', colour=LineColours.blueLine, inputToModel=False, fitCurveTo=True)
-    '''
-    This variable will be plotted with a solid blue line.  By including the following import statement in the model library file
-    '''
-    from SupportModules.GraphSupport import LineColours
-    '''
-    it is possible to easily define the line type and colour of this variable's plot on the line graph.
-    Additionally, this variable will not be used as input to the model but the model curve will be
-    fit to its curve.
-
-
-### Model Constant
-    On the Ferret GUI, a constant's value maybe displayed in a spin box
-    or in a dropdown list if it takes a set of discrete values.
-    On the Ferret GUI, it is possible to adjust the value of a constant
-    in order to see how doing so changes the shape of the curve
-    predicted by the model.
+### Model Constant class
+On the Ferret GUI, a constant's value maybe displayed in a spin box
+or in a dropdown list if it takes a set of discrete values.
+On the Ferret GUI, it is possible to adjust the value of a constant
+in order to see how doing so changes the shape of the curve
+predicted by the model.
 
     The *ModelConstant* class has properties that are set by the following input arguments 
     when a model constant object is created.
@@ -106,17 +81,8 @@ For example, in the following code snippet a variable object called *regionOfInt
         minValue - the minimum value of the constant's spinbox.
         maxValue - the maximum value of the constant's spinbox.
         listValues - the list of discrete values that a constant may take.
-
-    For example, in the following code snippet a constant object called *FA* is created,
-    '''
-    valuesFA = [str(x) for x in range(10,31,1)]
-    FA = ModelConstant(shortName='FA', longName=None, defaultValue=20, stepSize=None,
-                       precision=1, units = None, minValue=10, maxValue=30, listValues=valuesFA)
-    '''
-    FA takes an integer value in the range 10-30. It is represented on the GUI by a drop down list containing
-    integers in the range 10-30 and it displays the default value of 20.
-
-### Model Parameter
+        
+### Model Parameter class
 The *ModelParameter* class has properties that are set by the following input arguments 
 when a model parameter object is created. On the Ferret GUI, a parameter is displayed in a spin box.
 So, many of this class's parameters pertain to the display of the parameter value in a spin box
@@ -138,6 +104,129 @@ in order to see how doing so changes the shape of the curve predicted by the mod
                     when the model is fitted to the curve formed by experimental data.
     upperConstraint - the upper constraint put on the parameter's value 
                     when the model is fitted to the curve formed by experimental data.
+                    
+                    
+## Defining a simple linear model.
+In order to make a simple linear model available for use in Ferret, such as
+
+    y = ax + b
+   
+    where a and b are parameters.
+   
+the following steps must be followed.
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+
+1. Place the following import statements at the top of your model library file.     
+These 2 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s).
+    
+        from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+        from SupportModules.GraphSupport import LineColours
+
+
+3. Write a function that executes the mathematical model.  
+        import numpy as np
+        def linearModel(x, a, b, constantsString=None):
+             return np.multiply(x,a) + b
+         
+ 2. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 
+        def returnModelList():
+            linear = Model(shortName='Linear', 
+                     longName ='Linear', 
+                     xDataInputOnly = True,
+                     modelFunction = linearModel,
+                     parameterList = setUpParametersForLinearModel(), 
+                     variablesList = setUpVariablesForAllModels())
+                     
+            return [linear]
+                     
+The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
+
+3. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
+
+        def setUpParametersForLinearMode():
+            paramList = []
+            a = ModelParameter(shortName='a',
+                                longName='a',
+                                units='mL/min/mL', 
+                                defaultValue=1.0, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(a)    
+            b = ModelParameter(shortName='b',
+                                longName='b',
+                                units='mL/min/mL', 
+                                defaultValue=2, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(b)    
+            return paramList
+
+4. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+    
+        def setUpVariablesForAllModels():
+            variablesList = []
+            X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
+            variablesList.append(X)
+
+            X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
+            variablesList.append(X2)
+            return variablesList
+
+## Defining a simple linear model that utilises the equation of a straight line.
+In order to make a simple linear model available for use in Ferret, such as
+
+    y = mx + c
+   
+    where m is a parameters and c is a constant.
+   
+the following steps must be followed.
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
+    
+    HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
+                     longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
+                     modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
+                     parameterList = setUpParameters(), 
+                     constantsList = setUpConstants(),
+                     variablesList = setUpVariables())
+    
+The functions **HighFlowSingleInletGadoxetate2DSPGR_Rat**, **setUpParameters**, **setUpConstants** & 
+**setUpVariables** are defined outside the class.
+**setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
+respectively.
+
+
+For example, in the following code snippet a variable object called *regionOfInterest* is created,
+    '''
+    regionOfInterest = ModelVariable('ROI', 'Region of Interest', colour=LineColours.blueLine, inputToModel=False, fitCurveTo=True)
+    '''
+    This variable will be plotted with a solid blue line.  By including the following import statement in the model library file
+    '''
+    from SupportModules.GraphSupport import LineColours
+    '''
+    it is possible to easily define the line type and colour of this variable's plot on the line graph.
+    Additionally, this variable will not be used as input to the model but the model curve will be
+    fit to its curve.
+
+
+
+
+    For example, in the following code snippet a constant object called *FA* is created,
+    '''
+    valuesFA = [str(x) for x in range(10,31,1)]
+    FA = ModelConstant(shortName='FA', longName=None, defaultValue=20, stepSize=None,
+                       precision=1, units = None, minValue=10, maxValue=30, listValues=valuesFA)
+    '''
+    FA takes an integer value in the range 10-30. It is represented on the GUI by a drop down list containing
+    integers in the range 10-30 and it displays the default value of 20.
+
+
 
 For example, in the following code snippet a variable object called *regionOfInterest* is created,
     '''
