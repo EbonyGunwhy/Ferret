@@ -194,11 +194,11 @@ must have the following format as show in the definition of *HighFlowSingleInlet
                     int(constantsDict['baseline']),\
                     float(constantsDict['FA']), float(constantsDict['r1']), \
                     float(constantsDict['R10a']), float(constantsDict['R10t']) 
-                    '''
+                   
 ### Defining a list of constant objects
 If your model uses constants, you will need to write a function that returns a list of one or more
 constant objects.  The following is a function that returns a list of 2 constant objects.
-'''
+
     def setUpConstants():
         constantList = []
         TR = ModelConstant(shortName='TR', longName=None, defaultValue=0.013, stepSize=0.001,
@@ -211,12 +211,12 @@ constant objects.  The following is a function that returns a list of 2 constant
                            precision=1, units = None, minValue=1, maxValue=10, listValues=baseLineValues)
         constantList.append(baseline)
         return constantList
-    '''
+    
 
 ### Defining a list of parameter objects
 If your model uses parameters, you will need to write a function that returns a list of one or more
 parameter objects.  The following is a function that returns a list of 2 parameter objects.
-'''
+
     def setUpParameters():
         paramList = []
         extraCellularVolFract = ModelParameter(shortName='Ve',
@@ -239,12 +239,12 @@ parameter objects.  The following is a function that returns a list of 2 paramet
                                             maxValue=100.0)
         paramList.append(billaryEffluxRate)     
         return paramList
-    '''
+  
 
 ### Defining a list of variable objects
 If your model uses variables, you will need to write a function that returns a list of one or more
 variable objects.  This is a function that returns a list of 2 variable objects.
-'''
+
     def setUpVariables():
         variablesList = []
         regionOfInterest = ModelVariable('ROI', 'Region of Interest', LineColours.blueLine, False, True)
@@ -253,7 +253,7 @@ variable objects.  This is a function that returns a list of 2 variable objects.
         arterialInputFunction = ModelVariable('AIF', 'Arterial Input Function', LineColours.redLine, True, False)
         variablesList.append(arterialInputFunction)
         return variablesList
-'''
+
 
 ### Returning a list of model objects to Ferret
 Every model library file must contain a **returnModelList()** function that returns a list of model objects
@@ -264,7 +264,7 @@ Below is a **returnModelList()** function that returns a list of 2 model objects
 of the setUpParameters(), setUpConstants() & setUpVariables() functions to populate the parameterList, 
 constantsList & variablesList properties respectively.
 
-    '''
+    
     def returnModelList():
         HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
                          longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
@@ -283,7 +283,7 @@ constantsList & variablesList properties respectively.
                          )
     
         return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
-    '''
+    
 
 ### The function *returnDataFileFolder*
 This is a an optional function that returns the file path to the folder containing 
@@ -291,10 +291,10 @@ CSV data files that form the input to Ferret.
 Including the following import statement in *Ferret.py* allows this function to be run to return the
 file path to the folder containing the data files.  See the *main()* function in Ferret.py.
 
-    '''
+   
     from MyModels import returnDataFileFolder
     ferretWidget = Ferret(statusBar=window.statusBar(),  dataFileFolder=returnDataFileFolder())
-    '''
+    
 
 ### Passing a list of model objects into Ferret.
 Rather than manually selecting a model library file, it is possible to pass a list of model objects
