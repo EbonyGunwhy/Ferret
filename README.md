@@ -62,7 +62,7 @@ when a model variable object is created.
     fitCurveTo - boolean indicating if the model to fit to the curve of this variable
                     plotted on a graph.
 
-### Model Constant
+### Model Constant class
 On the Ferret GUI, a constant's value maybe displayed in a spin box
 or in a dropdown list if it takes a set of discrete values.
 On the Ferret GUI, it is possible to adjust the value of a constant
@@ -82,7 +82,7 @@ predicted by the model.
         maxValue - the maximum value of the constant's spinbox.
         listValues - the list of discrete values that a constant may take.
         
-### Model Parameter
+### Model Parameter class
 The *ModelParameter* class has properties that are set by the following input arguments 
 when a model parameter object is created. On the Ferret GUI, a parameter is displayed in a spin box.
 So, many of this class's parameters pertain to the display of the parameter value in a spin box
@@ -113,7 +113,7 @@ In order to make a simple linear model available for use in Ferret, such as
    
     where a and b are parameters.
    
-the following steps must be followed.  The full implementation of this model can be found in The folder **Ferret\Developer\ModelLibrary*\SimpleModels.py*  
+the following steps must be followed.  The full implementation of this model can be found in The folder **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Write a function that executes the mathematical model.  
 
@@ -135,7 +135,31 @@ the following steps must be followed.  The full implementation of this model can
                      
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
-3. 
+3. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
+
+    def setUpParametersForLinearMode():
+        paramList = []
+        a = ModelParameter(shortName='a',
+                            longName='a',
+                            units='mL/min/mL', 
+                            defaultValue=1.0, 
+                            stepSize=1, 
+                            precision=1, 
+                            minValue=1, 
+                            maxValue=100.0)
+        paramList.append(a)    
+        b = ModelParameter(shortName='b',
+                            longName='b',
+                            units='mL/min/mL', 
+                            defaultValue=2, 
+                            stepSize=1, 
+                            precision=1, 
+                            minValue=1, 
+                            maxValue=100.0)
+        paramList.append(b)    
+        return paramList
+
+    
 
 
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
