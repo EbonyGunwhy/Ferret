@@ -5,21 +5,21 @@ from SupportModules.GraphSupport import LineColours
 #*********************************************************************************
 #** Models
 #*********************************************************************************
-def quadraticModel(inputData, a, b, constantsString):
+def quadraticModel(x, a, b, constantsString):
     #y = ax^2 + bx + c
     constantsDict = eval(constantsString) 
     c = float(constantsDict['c'])
-    return np.multiply((inputData*inputData),a) + np.multiply(inputData, b) + c
+    return np.multiply((x**2),a) + np.multiply(x, b) + c
 
 
-def straightLineModel(inputData, m, constantsString):
+def straightLineModel(x, m, constantsString):
     constantsDict = eval(constantsString) 
     c = float(constantsDict['c'])
-    return np.multiply(inputData,m) + c
+    return np.multiply(x,m) + c
 
 
-def linearModel(inputData, a, b, constantsString=None):
-    return np.multiply(inputData,a) + b
+def linearModel(x, a, b, constantsString=None):
+    return np.multiply(x,a) + b
 
 #*******************************************************************************
 #** Define parameters for the model
