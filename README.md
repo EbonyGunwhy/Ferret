@@ -11,9 +11,9 @@ LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in W
 The menu item **Ferret** will be created below a horizontal separater line.
 
 # How to define models for use in Ferret
-The following is a description of how to define one or more models for use in Ferret using the
-Python programming language. The folder **Ferret\Developer\ModelLibrary** contains a Python file called
-*MyModels.py* that contains the definition of two models.  This model library file may be cloned 
+The following is a description of how to define one or more models, using the
+Python programming language, for use in Ferret . The folder **Ferret\Developer\ModelLibrary** contains a Python file called
+*SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
 and edited to produce more model libraries.
 
 It is assumed that the person carrying out this work is an experienced Python developer.
@@ -48,7 +48,13 @@ when a model object is created.
 
     variablesList - list of the variable objects that describe each of the variables
                 associated with the model. This argument is optional.
-
+                
+## Defining a simple linear model.
+The following is a description of how to make the following model available for use in Ferret,
+    *y = ax + b*
+   
+    where a and b are parameters.
+    
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
     '''
     HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
