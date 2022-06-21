@@ -51,6 +51,7 @@ when a model object is created.
                 
 ## Defining a simple linear model.
 The following is a description of how to make the following model available for use in Ferret,
+
     *y = ax + b*
    
     where a and b are parameters.
