@@ -113,7 +113,8 @@ In order to make a simple linear model available for use in Ferret, such as
    
     where a and b are parameters.
    
-the following steps must be followed.  The full implementation of this model can be found in The folder **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+the following steps must be followed.
+The full implementation of this model can be found in the folder **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Write a function that executes the mathematical model.  
 
@@ -137,6 +138,7 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
 
 3. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
 
+
     def setUpParametersForLinearMode():
         paramList = []
         a = ModelParameter(shortName='a',
@@ -159,7 +161,16 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
         paramList.append(b)    
         return paramList
 
+4. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
     
+    def setUpVariablesForAllModels():
+        variablesList = []
+        X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
+        variablesList.append(X)
+
+        X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
+        variablesList.append(X2)
+        return variablesList
 
 
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
