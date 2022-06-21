@@ -116,8 +116,15 @@ In order to make a simple linear model available for use in Ferret, such as
 the following steps must be followed.
 The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
-1. Write a function that executes the mathematical model.  
+1. Place the following import statements at the top of your model library file.     
+These 2 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s).
+    
+    from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+    from SupportModules.GraphSupport import LineColours
 
+
+3. Write a function that executes the mathematical model.  
         import numpy as np
         def linearModel(x, a, b, constantsString=None):
              return np.multiply(x,a) + b
