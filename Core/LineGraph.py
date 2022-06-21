@@ -95,6 +95,7 @@ class LineGraph(QWidget):
         Removes the existing plots from the graph
         """
         self.figure.clear()
+        self.canvas.draw()
         self._setUpSubPlot()
 
 
