@@ -12,7 +12,7 @@ The menu item **Ferret** will be created below a horizontal separater line.
 
 # How to define models for use in Ferret
 The following is a description of how to define one or more models, using the
-Python programming language, for use in Ferret . The folder **Ferret\Developer\ModelLibrary** contains a Python file called
+Python programming language, for use in Ferret . The folder **Ferret\Developer\ModelLibrary** contains a Python model library file called
 *SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
 and edited to produce more model libraries.
 
@@ -50,12 +50,31 @@ when a model object is created.
                 associated with the model. This argument is optional.
                 
 ## Defining a simple linear model.
-The following is a description of how to make the following model available for use in Ferret,
+In order to make a simple linear model available for use in Ferret, such as
 
-    *y = ax + b*
+    y = ax + b
    
     where a and b are parameters.
-    
+   
+the following steps must be followed.
+
+1. Write a function that executes the mathematical model.  
+
+    import numpy as np
+    def linearModel(x, a, b, constantsString=None):
+         return np.multiply(x,a) + b
+         
+ 2. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 
+        linear = Model(shortName='Linear', 
+                     longName ='Linear', 
+                     xDataInputOnly = True,
+                     modelFunction = linearModel,
+                     parameterList = setUpParametersForLinearModel(), 
+                     variablesList = setUpVariablesForAllModels())
+                     
+The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
+
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
     '''
     HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
