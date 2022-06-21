@@ -264,7 +264,7 @@ Below is a **returnModelList()** function that returns a list of 2 model objects
 of the setUpParameters(), setUpConstants() & setUpVariables() functions to populate the parameterList, 
 constantsList & variablesList properties respectively.
 
-'''
+    '''
     def returnModelList():
         HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
                          longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
@@ -283,7 +283,7 @@ constantsList & variablesList properties respectively.
                          )
     
         return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
-'''
+    '''
 
 ### The function *returnDataFileFolder*
 This is a an optional function that returns the file path to the folder containing 
@@ -291,19 +291,19 @@ CSV data files that form the input to Ferret.
 Including the following import statement in *Ferret.py* allows this function to be run to return the
 file path to the folder containing the data files.  See the *main()* function in Ferret.py.
 
-'''
+    '''
     from MyModels import returnDataFileFolder
     ferretWidget = Ferret(statusBar=window.statusBar(),  dataFileFolder=returnDataFileFolder())
-'''
+    '''
 
 ### Passing a list of model objects into Ferret.
 Rather than manually selecting a model library file, it is possible to pass a list of model objects
 into Ferret.  See the *main()* function in Ferret.py.
 
-'''
+    '''
     from MyModels import returnDataFileFolder
     from MyModels import returnModelList
     ferretWidget = Ferret(statusBar=window.statusBar(),
                              dataFileFolder=returnDataFileFolder(),
                              modelList=returnModelList())
-'''
+    '''
