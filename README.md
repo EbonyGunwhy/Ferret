@@ -178,7 +178,15 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
             variablesList.append(X2)
             return variablesList
 
+## Defining a simple linear model that utilises the equation of a straight line.
+In order to make a simple linear model available for use in Ferret, such as
 
+    y = mx + c
+   
+    where m is a parameters and c is a constant.
+   
+the following steps must be followed.
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
     
     HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
