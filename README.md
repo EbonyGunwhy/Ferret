@@ -468,10 +468,9 @@ file path to the folder containing the data files.  See the *main()* function in
 Rather than manually selecting a model library file, it is possible to pass a list of model objects
 into Ferret.  See the *main()* function in Ferret.py.
 
-    '''
     from MyModels import returnDataFileFolder
     from MyModels import returnModelList
     ferretWidget = Ferret(statusBar=window.statusBar(),
                              dataFileFolder=returnDataFileFolder(),
                              modelList=returnModelList())
-    '''
+    
