@@ -381,14 +381,14 @@ constantsString = A string representation of a dictionary of constant name:value
 
 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
-     def returnModelList():
-            HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
-                     longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
-                     modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
-                     parameterList = setUpParameters(), 
-                     constantsList = setUpConstants(),
-                     variablesList = setUpVariables())
-             return [HF1_2CFM_2DSPGR]
+         def returnModelList():
+                HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
+                         longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
+                         modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
+                         parameterList = setUpParameters(), 
+                         constantsList = setUpConstants(),
+                         variablesList = setUpVariables())
+                 return [HF1_2CFM_2DSPGR]
     
 The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class.
 **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
@@ -418,6 +418,19 @@ respectively.
                                                 maxValue=100.0)
             paramList.append(billaryEffluxRate)     
             return paramList
+
+
+5. Write the function, **setUpVariables** that returns a list of model variables. 
+
+        def setUpVariables():
+            variablesList = []
+            regionOfInterest = ModelVariable('ROI', 'Region of Interest', LineColours.blueLine, False, True)
+            variablesList.append(regionOfInterest)
+
+            arterialInputFunction = ModelVariable('AIF', 'Arterial Input Function', LineColours.redLine, True, False)
+            variablesList.append(arterialInputFunction)
+            return variablesList
+
 
 For example, in the following code snippet a variable object called *regionOfInterest* is created,
     '''
