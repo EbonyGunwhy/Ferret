@@ -197,11 +197,13 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.GraphSupport import LineColours
 
 
-2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
 
         import numpy as np
-        def linearModel(x, a, b, constantsString=None):
-             return np.multiply(x,a) + b
+        def straightLineModel(x, m, constantsString):
+            constantsDict = eval(constantsString) 
+            c = float(constantsDict['c'])
+            return np.multiply(x,m) + c
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
