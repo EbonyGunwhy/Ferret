@@ -354,44 +354,70 @@ will only be mandatory if you need to define model parameter(s).
 of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
 must have the following format as show in the definition of *HighFlowSingleInletGadoxetate2DSPGR_Rat*.
 
-    def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString):
+        def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString):
 
 where 
 xData2DArray = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
                The formation of xData2DArray is performed in Ferret and the user does not
                need to concern themself with this. This argument needs to be unpacked in
                the function; thus,
-               '''
+               
                t = xData2DArray[:,0]
                Sa = xData2DArray[:,1]
-               '''
+              
 Ve, Kbh, Khe, = model parameters.  They need to be individually named as this is a requirment 
-                of the curve fitting function. *parameters would not work.
+                of the curve fitting function. 
 constantsString = A string representation of a dictionary of constant name:value pairs.
                The formation of constantsString is performed in Ferret and the user does not
                need to concern themself with this.
                 This argument needs to be unpacked in the function; thus,
-                '''
+             
                 constantsDict = eval(constantsString) 
                 TR, baseline, FA, r1, R10a, R10t = float(constantsDict['TR']), \
                 int(constantsDict['baseline']),\
                 float(constantsDict['FA']), float(constantsDict['r1']), \
                 float(constantsDict['R10a']), float(constantsDict['R10t'])  
 
-For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
-    
-    HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
+
+3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 
+     def returnModelList():
+            HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
                      longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
                      modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
                      parameterList = setUpParameters(), 
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables())
+             return [HF1_2CFM_2DSPGR]
     
-The functions **HighFlowSingleInletGadoxetate2DSPGR_Rat**, **setUpParameters**, **setUpConstants** & 
-**setUpVariables** are defined outside the class.
+The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class.
 **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
 respectively.
 
+4. Write the function, **setUpParameters** to return a list of model parameters.
+
+       def setUpParameters():
+            paramList = []
+            extraCellularVolFract = ModelParameter(shortName='Ve',
+                                                longName='Extracellular Volume Fraction',
+                                                units='%', 
+                                                defaultValue=23.0, 
+                                                stepSize=1.0, 
+                                                precision=2, 
+                                                minValue=0.01,
+                                                maxValue=99.99)
+            paramList.append(extraCellularVolFract)
+
+            billaryEffluxRate = ModelParameter(shortName='Kbh',
+                                                longName='Billiary Efflux Rate',
+                                                units='mL/min/mL', 
+                                                defaultValue=0.0918, 
+                                                stepSize=0.01, 
+                                                precision=4, 
+                                                minValue=0.01, 
+                                                maxValue=100.0)
+            paramList.append(billaryEffluxRate)     
+            return paramList
 
 For example, in the following code snippet a variable object called *regionOfInterest* is created,
     '''
@@ -446,8 +472,7 @@ will only be mandatory if you need to define model parameter(s).
     from SupportModules.GraphSupport import LineColours
 '''
 
-### Model Functions
-Next the function(s) that solve the mathematical model are defined. 
+
                    
 ### Defining a list of constant objects
 If your model uses constants, you will need to write a function that returns a list of one or more
@@ -471,28 +496,7 @@ constant objects.  The following is a function that returns a list of 2 constant
 If your model uses parameters, you will need to write a function that returns a list of one or more
 parameter objects.  The following is a function that returns a list of 2 parameter objects.
 
-    def setUpParameters():
-        paramList = []
-        extraCellularVolFract = ModelParameter(shortName='Ve',
-                                            longName='Extracellular Volume Fraction',
-                                            units='%', 
-                                            defaultValue=23.0, 
-                                            stepSize=1.0, 
-                                            precision=2, 
-                                            minValue=0.01,
-                                            maxValue=99.99)
-        paramList.append(extraCellularVolFract)
-
-        billaryEffluxRate = ModelParameter(shortName='Kbh',
-                                            longName='Billiary Efflux Rate',
-                                            units='mL/min/mL', 
-                                            defaultValue=0.0918, 
-                                            stepSize=0.01, 
-                                            precision=4, 
-                                            minValue=0.01, 
-                                            maxValue=100.0)
-        paramList.append(billaryEffluxRate)     
-        return paramList
+    
   
 
 ### Defining a list of variable objects
