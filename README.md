@@ -345,7 +345,7 @@ The following steps must be followed.
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s).
+will only be mandatory if you need to define model parameter(s). *LineColours* provides an easy means of defining line style and colour when plotting variables on a graph.
     
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
@@ -424,136 +424,33 @@ respectively.
 
         def setUpVariables():
             variablesList = []
-            regionOfInterest = ModelVariable('ROI', 'Region of Interest', LineColours.blueLine, False, True)
+            #This variable will be plotted with a solid blue line
+            regionOfInterest = ModelVariable('ROI', 'Region of Interest', LineColours.blueLine, inputToModel=False, fitCurveTo=True)
             variablesList.append(regionOfInterest)
 
-            arterialInputFunction = ModelVariable('AIF', 'Arterial Input Function', LineColours.redLine, True, False)
+            This variable will be plotted with a solid red line
+            arterialInputFunction = ModelVariable('AIF', 'Arterial Input Function', LineColours.redLine, inputToModel=True, fitCurveTo=False)
             variablesList.append(arterialInputFunction)
+            
             return variablesList
 
+6. Write the function **setUpConstants** that returns a list of model constants.
 
-For example, in the following code snippet a variable object called *regionOfInterest* is created,
-    '''
-    regionOfInterest = ModelVariable('ROI', 'Region of Interest', colour=LineColours.blueLine, inputToModel=False, fitCurveTo=True)
-    '''
-    This variable will be plotted with a solid blue line.  By including the following import statement in the model library file
-    '''
-    from SupportModules.GraphSupport import LineColours
-    '''
-    it is possible to easily define the line type and colour of this variable's plot on the line graph.
-    Additionally, this variable will not be used as input to the model but the model curve will be
-    fit to its curve.
+        def setUpConstants():
+            constantList = []
 
+            valuesFA = [str(x) for x in range(10,31,1)]
+            FA = ModelConstant(shortName='FA', longName=None, 
+                                     defaultValue=20, stepSize=None,
+                               precision=1, units = None, minValue=10, maxValue=30, listValues=valuesFA)
+            constantList.append(FA)
 
+            return constantList
 
 
-    For example, in the following code snippet a constant object called *FA* is created,
-    '''
-    valuesFA = [str(x) for x in range(10,31,1)]
-    FA = ModelConstant(shortName='FA', longName=None, defaultValue=20, stepSize=None,
-                       precision=1, units = None, minValue=10, maxValue=30, listValues=valuesFA)
-    '''
+    In the above code snippet a constant object called *FA* is created,
     FA takes an integer value in the range 10-30. It is represented on the GUI by a drop down list containing
     integers in the range 10-30 and it displays the default value of 20.
-
-
-
-For example, in the following code snippet a variable object called *regionOfInterest* is created,
-    '''
-    regionOfInterest = ModelVariable('ROI', 'Region of Interest', colour=LineColours.blueLine, inputToModel=False, fitCurveTo=True)
-    '''
-    This variable will be plotted with a solid blue line.  It will not be used as input to the model but the model curve will be
-    fit to it.
-
-## How to create a model library file
-By analysing the code in *MyModels.py*, the creation of a model library file will be described.
-
-### Import Statements
-The following import statements make Python packages available that are needed in the coding of the mathematical models 
-used in *MyModels.py*.  They may not be needed in your models.
-'''
-    #Python libraries that support running the models
-    import numpy as np
-    from scipy.optimize import fsolve
-    from joblib import Parallel, delayed
-    import SupportModules.MathsTools  as tools
-'''
-The following 2 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s).
-'''
-    from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
-    from SupportModules.GraphSupport import LineColours
-'''
-
-
-                   
-### Defining a list of constant objects
-If your model uses constants, you will need to write a function that returns a list of one or more
-constant objects.  The following is a function that returns a list of 2 constant objects.
-
-    def setUpConstants():
-        constantList = []
-        TR = ModelConstant(shortName='TR', longName=None, defaultValue=0.013, stepSize=0.001,
-                           precision=4, units = None, minValue=0, maxValue=0.1, listValues=[])
-        constantList.append(TR)
-
-        baseLineValues = [str(x) for x in range(1,11,1)]
-        baseline = ModelConstant(shortName='baseline', longName='baseline', 
-                                 defaultValue=1, stepSize=None,
-                           precision=1, units = None, minValue=1, maxValue=10, listValues=baseLineValues)
-        constantList.append(baseline)
-        return constantList
-    
-
-### Defining a list of parameter objects
-If your model uses parameters, you will need to write a function that returns a list of one or more
-parameter objects.  The following is a function that returns a list of 2 parameter objects.
-
-    
-  
-
-### Defining a list of variable objects
-If your model uses variables, you will need to write a function that returns a list of one or more
-variable objects.  This is a function that returns a list of 2 variable objects.
-
-    def setUpVariables():
-        variablesList = []
-        regionOfInterest = ModelVariable('ROI', 'Region of Interest', LineColours.blueLine, False, True)
-        variablesList.append(regionOfInterest)
-
-        arterialInputFunction = ModelVariable('AIF', 'Arterial Input Function', LineColours.redLine, True, False)
-        variablesList.append(arterialInputFunction)
-        return variablesList
-
-
-### Returning a list of model objects to Ferret
-Every model library file must contain a **returnModelList()** function that returns a list of model objects
-to Ferret.  When a model library file is selected in Ferret, its **returnModelList()** function is executed
-in order to generate a list of model objects for use in Ferret.
-
-Below is a **returnModelList()** function that returns a list of 2 model objects. Note the use
-of the setUpParameters(), setUpConstants() & setUpVariables() functions to populate the parameterList, 
-constantsList & variablesList properties respectively.
-
-    
-    def returnModelList():
-        HF1_2CFM_2DSPGR = Model(shortName='HF1-2CFM+2DSPGR', 
-                         longName ='High Flow Single Inlet - Two Compartment Filtration and 2DSPGR Model', 
-                         modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
-                         parameterList = setUpParameters(), 
-                         constantsList = setUpConstants(),
-                         variablesList = setUpVariables()
-                         )
-        
-        HF1_2CFM_3DSPGR = Model(shortName='HF1-2CFM+3DSPGR', 
-                         longName ='High Flow Single Inlet - Two Compartment Filtration and 3DSPGR Model', 
-                         modelFunction = HighFlowSingleInletGadoxetate3DSPGR_Rat,
-                         parameterList = setUpParameters(),  
-                         constantsList = setUpConstants(),
-                         variablesList = setUpVariables()
-                         )
-    
-        return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
     
 
 ### The function *returnDataFileFolder*
