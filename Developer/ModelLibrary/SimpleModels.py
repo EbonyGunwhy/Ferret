@@ -1,4 +1,21 @@
+"""
+This module contains a library of simple mathematical models that can be used in Ferret.
+
+The purpose of this model is to demonstrate how to implement models for the use in Ferret.
+This module may be copied and cloned to create your own model library.
+
+A model library must contain a returnModelList function and a function for each
+mathematical model.
+"""
+#Python library that supports running the models
 import numpy as np
+#The following 2 module imports are mandatory for model definition.
+#Note that modules are imported as parentPackage.module.
+#This allows Ferret to be launched from Weasel and used as a
+#standalone application.
+#At the head of Ferret.py, the path to folder SupportModules is
+#added to sys.path, which contains a list of directories 
+#that the interpreter will search in for the required module.
 from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
 from SupportModules.GraphSupport import LineColours
 
