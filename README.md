@@ -1,6 +1,6 @@
 # FIRST DRAFT 
 # Running Ferret
-Ferret.py is the start-up file when Ferret is used as a stand-alone application.
+Ferret.py is the start-up file when Ferret is used as a stand-alone application. Ferret.py contains the definition of the Ferret class that inherits from the PyQt5 QWidget class to create a custom widget. When Ferret is run as a stand-alone application, the Ferret widget is hosted on a QMainWindow window. When Ferret is run within Weasel, the Ferret widget is hosted on a PyQt5 QMdiSubWindow subwindow within the Weasel MDI.
 
 LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in Weasel. To add Ferret to a menu in Weasel, insert the following lines of code in a Menu Python file,
 
@@ -463,7 +463,8 @@ file path to the folder containing the data files.  See the *main()* function in
     from MyModels import returnDataFileFolder
     ferretWidget = Ferret(statusBar=window.statusBar(),  dataFileFolder=returnDataFileFolder())
     
-
+ The argument statusBar=window.statusBar(), allows the Ferret widget to display messages in the status bar of the window hosting it.
+ 
 ### Passing a list of model objects into Ferret.
 Rather than manually selecting a model library file, it is possible to pass a list of model objects
 into Ferret.  See the *main()* function in Ferret.py.
