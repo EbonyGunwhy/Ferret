@@ -1,4 +1,4 @@
-# Running Ferret
+# FIRST DRAFT Running Ferret
 Ferret.py is the start-up file when Ferret is used as a stand-alone application.
 
 LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in Weasel. To add Ferret to a menu in Weasel, insert the following lines of code in a Menu Python file,
@@ -124,12 +124,13 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.GraphSupport import LineColours
 
 
-3. Write a function that executes the mathematical model.  
+2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+
         import numpy as np
         def linearModel(x, a, b, constantsString=None):
              return np.multiply(x,a) + b
          
- 2. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
         def returnModelList():
             linear = Model(shortName='Linear', 
@@ -143,7 +144,7 @@ will only be mandatory if you need to define model parameter(s).
                      
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
-3. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
+4. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
 
         def setUpParametersForLinearMode():
             paramList = []
@@ -167,7 +168,7 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
             paramList.append(b)    
             return paramList
 
-4. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
     
         def setUpVariablesForAllModels():
             variablesList = []
@@ -188,6 +189,68 @@ In order to make a simple linear model available for use in Ferret, such as
 the following steps must be followed.
 The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
+1. Place the following import statements at the top of your model library file.     
+These 2 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s).
+    
+        from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+        from SupportModules.GraphSupport import LineColours
+
+
+2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+
+        import numpy as np
+        def linearModel(x, a, b, constantsString=None):
+             return np.multiply(x,a) + b
+         
+ 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 
+        def returnModelList():
+            linear = Model(shortName='Linear', 
+                     longName ='Linear', 
+                     xDataInputOnly = True,
+                     modelFunction = linearModel,
+                     parameterList = setUpParametersForLinearModel(), 
+                     variablesList = setUpVariablesForAllModels())
+                     
+            return [linear]
+                     
+The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
+
+4. Write the function, **setUpParametersForLinearMode** to return a list of model parameters.
+
+        def setUpParametersForLinearMode():
+            paramList = []
+            a = ModelParameter(shortName='a',
+                                longName='a',
+                                units='mL/min/mL', 
+                                defaultValue=1.0, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(a)    
+            b = ModelParameter(shortName='b',
+                                longName='b',
+                                units='mL/min/mL', 
+                                defaultValue=2, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(b)    
+            return paramList
+
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+    
+        def setUpVariablesForAllModels():
+            variablesList = []
+            X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
+            variablesList.append(X)
+
+            X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
+            variablesList.append(X2)
+            return variablesList
 
 
 
