@@ -274,40 +274,49 @@ will only be mandatory if you need to define model parameter(s).
 
 2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
 
-        import numpy as np
-        def straightLineModel(x, m, constantsString):
+       import numpy as np
+       def quadraticModel(x, a, b, constantsString):
             constantsDict = eval(constantsString) 
             c = float(constantsDict['c'])
-            return np.multiply(x,m) + c
+            return np.multiply((x**2),a) + np.multiply(x, b) + c
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
         def returnModelList():
-            straightLine = Model(shortName='Straight Line',
-                         longName='Straight Line',
+            quadratic = Model(shortName='Quadratic',
+                         longName='Quadratic',
                          xDataInputOnly = True,
-                         modelFunction = straightLineModel,
-                         parameterList = setUpParameterForStraightLineModel(), 
+                         modelFunction = quadraticModel,
+                         parameterList = setUpParametersForQuadraticModel(), 
                          variablesList = setUpVariablesForAllModels(),
                          constantsList = setUpConstantForYAxisIntersection())
                      
-            return [straightLine]
+            return [quadratic]
                      
-The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
+The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
 
-4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters.
+4. Write the function, **setUpParametersForQuadraticModel** to return a list of model parameters.
 
-       def setUpParameterForStraightLineModel():
+       def setUpParametersForQuadraticModel():
             paramList = []
-            m = ModelParameter(shortName='m',
-                                longName='m',
-                                units='s-1', 
-                                defaultValue=1.0, 
+            a = ModelParameter(shortName='a',
+                                longName='a',
+                                units='mL/min/mL', 
+                                defaultValue=4.0, 
                                 stepSize=1, 
                                 precision=1, 
                                 minValue=1, 
                                 maxValue=100.0)
-            paramList.append(m)    
+            paramList.append(a)    
+            b = ModelParameter(shortName='b',
+                                longName='b',
+                                units='mL/min/mL', 
+                                defaultValue=2, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(b)    
             return paramList
 
 5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
@@ -329,6 +338,45 @@ The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllMod
                                precision=1, units = None, minValue=0, maxValue=10000, listValues=[])
             constantList.append(c)
             return constantList
+
+## Defining a complex model that describes the function of the liver.
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The following steps must be followed.
+
+1. Place the following import statements at the top of your model library file.     
+These 2 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s).
+    
+        from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+        from SupportModules.GraphSupport import LineColours
+
+2. Write a function that executes the mathematical model.  In order to comply with the needs
+of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
+must have the following format as show in the definition of *HighFlowSingleInletGadoxetate2DSPGR_Rat*.
+
+    def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString):
+
+where 
+xData2DArray = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
+               The formation of xData2DArray is performed in Ferret and the user does not
+               need to concern themself with this. This argument needs to be unpacked in
+               the function; thus,
+               '''
+               t = xData2DArray[:,0]
+               Sa = xData2DArray[:,1]
+               '''
+Ve, Kbh, Khe, = model parameters.  They need to be individually named as this is a requirment 
+                of the curve fitting function. *parameters would not work.
+constantsString = A string representation of a dictionary of constant name:value pairs.
+               The formation of constantsString is performed in Ferret and the user does not
+               need to concern themself with this.
+                This argument needs to be unpacked in the function; thus,
+                '''
+                constantsDict = eval(constantsString) 
+                TR, baseline, FA, r1, R10a, R10t = float(constantsDict['TR']), \
+                int(constantsDict['baseline']),\
+                float(constantsDict['FA']), float(constantsDict['r1']), \
+                float(constantsDict['R10a']), float(constantsDict['R10t'])  
 
 For example, in the following code snippet a model object called *HF1_2CFM_2DSPGR* is created,
     
@@ -399,33 +447,7 @@ will only be mandatory if you need to define model parameter(s).
 '''
 
 ### Model Functions
-Next the function(s) that solve the mathematical model are defined. In order to comply with the needs
-of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
-must have the following format as show in the definition of *HighFlowSingleInletGadoxetate2DSPGR_Rat*.
-'''
-    def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString)
-'''
-    where 
-    xData2DArray = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
-                   The formation of xData2DArray is performed in Ferret and the user does not
-                   need to concern themself with this. This argument needs to be unpacked in
-                   the function; thus,
-                   '''
-                   t = xData2DArray[:,0]
-                   Sa = xData2DArray[:,1]
-                   '''
-    Ve, Kbh, Khe, = model parameters.  They need to be individually named as this is a requirment 
-                    of the curve fitting function. *parameters would not work.
-    constantsString = A string representation of a dictionary of constant name:value pairs.
-                   The formation of constantsString is performed in Ferret and the user does not
-                   need to concern themself with this.
-                    This argument needs to be unpacked in the function; thus,
-                    '''
-                    constantsDict = eval(constantsString) 
-                    TR, baseline, FA, r1, R10a, R10t = float(constantsDict['TR']), \
-                    int(constantsDict['baseline']),\
-                    float(constantsDict['FA']), float(constantsDict['r1']), \
-                    float(constantsDict['R10a']), float(constantsDict['R10t']) 
+Next the function(s) that solve the mathematical model are defined. 
                    
 ### Defining a list of constant objects
 If your model uses constants, you will need to write a function that returns a list of one or more
