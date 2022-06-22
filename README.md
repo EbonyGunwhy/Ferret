@@ -1,4 +1,5 @@
-# FIRST DRAFT Running Ferret
+# FIRST DRAFT 
+# Running Ferret
 Ferret.py is the start-up file when Ferret is used as a stand-alone application.
 
 LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in Weasel. To add Ferret to a menu in Weasel, insert the following lines of code in a Menu Python file,
@@ -185,6 +186,81 @@ In order to make a simple linear model available for use in Ferret, such as
     y = mx + c
    
     where m is a parameters and c is a constant.
+   
+the following steps must be followed.
+The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+
+1. Place the following import statements at the top of your model library file.     
+These 2 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s).
+    
+        from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
+        from SupportModules.GraphSupport import LineColours
+
+2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+
+        import numpy as np
+        def straightLineModel(x, m, constantsString):
+            constantsDict = eval(constantsString) 
+            c = float(constantsDict['c'])
+            return np.multiply(x,m) + c
+         
+ 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
+ 
+        def returnModelList():
+            straightLine = Model(shortName='Straight Line',
+                         longName='Straight Line',
+                         xDataInputOnly = True,
+                         modelFunction = straightLineModel,
+                         parameterList = setUpParameterForStraightLineModel(), 
+                         variablesList = setUpVariablesForAllModels(),
+                         constantsList = setUpConstantForYAxisIntersection())
+                     
+            return [straightLine]
+                     
+The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
+
+4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters.
+
+       def setUpParameterForStraightLineModel():
+            paramList = []
+            m = ModelParameter(shortName='m',
+                                longName='m',
+                                units='s-1', 
+                                defaultValue=1.0, 
+                                stepSize=1, 
+                                precision=1, 
+                                minValue=1, 
+                                maxValue=100.0)
+            paramList.append(m)    
+            return paramList
+
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+    
+        def setUpVariablesForAllModels():
+            variablesList = []
+            X = ModelVariable('X', 'X', LineColours.blueLine, False, True)
+            variablesList.append(X)
+
+            X2 = ModelVariable('X2', 'X2', LineColours.redLine, True, False)
+            variablesList.append(X2)
+            return variablesList
+
+6. Write the function **setUpConstantForYAxisIntersection** that returns a list of model constants
+
+        def setUpConstantForYAxisIntersection():
+            constantList = []
+            c = ModelConstant(shortName='c', longName='Y Axis Intersection', defaultValue=1.0, stepSize=10.0,
+                               precision=1, units = None, minValue=0, maxValue=10000, listValues=[])
+            constantList.append(c)
+            return constantList
+
+## Defining a simple quadratic model.
+In order to make a simple quadratic model available for use in Ferret, such as
+
+    y = ax^2 + bx + c
+   
+    where a and b are parameters and c is a constant.
    
 the following steps must be followed.
 The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
