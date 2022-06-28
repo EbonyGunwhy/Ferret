@@ -129,9 +129,9 @@ Python programming language, for use in Ferret.
 ## Defining a simple linear model.
 In order to make a simple linear model available for use in Ferret, such as
 
-    y = ax + b
+        y = ax + b
    
-    where a and b are parameters.
+where a and b are parameters.
    
 the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
