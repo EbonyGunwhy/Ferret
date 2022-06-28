@@ -1,4 +1,3 @@
-# FIRST DRAFT 
 # Running Ferret
 Ferret.py is the start-up file when Ferret is used as a stand-alone application. Ferret.py contains the definition of the Ferret class that inherits from the PyQt5 QWidget class to create a custom widget. When Ferret is run as a stand-alone application, the Ferret widget is hosted on a QMainWindow window. When Ferret is run within Weasel, the Ferret widget is hosted on a PyQt5 QMdiSubWindow subwindow within the Weasel MDI.
 
@@ -134,8 +133,7 @@ In order to make a simple linear model available for use in Ferret, such as
    
     where a and b are parameters.
    
-the following steps must be followed.
-The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 The first module import is mandatory for model definition.
