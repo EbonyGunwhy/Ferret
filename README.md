@@ -12,13 +12,6 @@ LaunchFerretFromWeasel.py is the file that launches Ferret from a menu item in W
 The menu item **Ferret** will be created below a horizontal separater line.
 
 # How to define models for use in Ferret
-The following is a description of how to define one or more models, using the
-Python programming language, for use in Ferret . The folder **Ferret\Developer\ModelLibrary** contains a Python model library file called
-*SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
-and edited to produce more model libraries.
-
-It is assumed that the person carrying out this work is an experienced Python developer.
-
 ## Background
 The folder **Ferret\Developer\ModelLibrary\SupportModules** contains a Python class module called *Model.py*.
 
@@ -107,6 +100,13 @@ in order to see how doing so changes the shape of the curve predicted by the mod
                     when the model is fitted to the curve formed by experimental data.
                     
                     
+The following is a description of how to define one or more models, using the
+Python programming language, for use in Ferret. The folder **Ferret\Developer\ModelLibrary** contains a Python model library file called
+*SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
+and edited to produce more model libraries.
+
+It is assumed that the person carrying out this work is an experienced Python developer.
+
 ## Defining a simple linear model.
 In order to make a simple linear model available for use in Ferret, such as
 
