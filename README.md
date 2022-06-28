@@ -17,11 +17,11 @@ The folder **Ferret\Developer\ModelLibrary\SupportModules** contains a Python cl
 
 ### Model class
 Within *Model.py* there is a definition of the class *Model* that describes a mathematical model. 
-As well as storing the long & short names of the model, this class stores name of the external function, 
-that contains the logic of the mathematical model. 
+As well as storing the long & short names of the model, this class stores the external function, 
+that contains the logic of the mathematical model, as an object. 
 
-A model may have no or  1 or more constants, parameters and variables. Consequently, the class *Model* can
-store lists of parameter, constants and variable objects.  
+A model may have zero, 1 or more constants, parameters and variables. Consequently, the class *Model* can
+store lists of parameter, constant and variable objects.  
 Thus, Model.py, contains definitions of the classes, *ModelVariable*, *ModelConstant* & *ModelParameter* 
 that describe a single model variable, model constant and model parameter respectively.
 
@@ -31,11 +31,15 @@ The *Model* class has properties that are set by the following input arguments
 when a model object is created.
 
     shortName - the model's short name, usually an acronym. 
+    
     longName - the model's full name.
+    
     modelFunction - a function containing the logic of the mathematical model
-                passed into the model object as an object
+                passed into the model object as an object.
+                
     xDataInputOnly - boolean indicating if the only input to the model is x axis data.
                 Default is False, both x and y axis data are input to the model.
+                
     parameterList - list of parameter objects that describe each of the
                 parameters associated with the model. This argument is optional.
 
@@ -50,62 +54,78 @@ The *ModelVariable* class has properties that are set by the following input arg
 when a model variable object is created.
 
     shortName - the variable's short name, usually an acronym.
+    
     longName - the variable's full name.
+    
     colour - the colour of the line used to plot the variable on a graph.
-    inputToModel - boolean indicating if this variable forms input to the model
-    fitCurveTo - boolean indicating if the model to fit to the curve of this variable
+    
+    inputToModel - boolean indicating if this variable forms input to the model.
+    
+    fitCurveTo - boolean indicating if the model to be fitted to the curve of this variable
                     plotted on a graph.
 
 ### Model Constant class
-On the Ferret GUI, a constant's value maybe displayed in a spin box
+On the Ferret GUI, a constant's value is displayed in either a spin box
 or in a dropdown list if it takes a set of discrete values.
 On the Ferret GUI, it is possible to adjust the value of a constant
-in order to see how doing so changes the shape of the curve
-predicted by the model.
+in order to see how doing so changes the shape of the curve predicted by the model.
 
-    The *ModelConstant* class has properties that are set by the following input arguments 
-    when a model constant object is created.
+The *ModelConstant* class has properties that are set by the following input arguments 
+when a model constant object is created.
+
         shortName - the constant's short name, usually an acronym.
+        
         longName - the constant's full name.
+        
         defaultValue - the constant's default value.
+        
         stepSize - when constant's spinbox arrows are clicked, 
                 the value of the parameter is incremented/decremented by 
                 the value of stepSize.
-        precision - the number of decimal places displayed in the constant's spinbox
+                
+        precision - the number of decimal places displayed in the constant's spinbox.
+        
         minValue - the minimum value of the constant's spinbox.
+        
         maxValue - the maximum value of the constant's spinbox.
+        
         listValues - the list of discrete values that a constant may take.
         
 ### Model Parameter class
-The *ModelParameter* class has properties that are set by the following input arguments 
-when a model parameter object is created. On the Ferret GUI, a parameter is displayed in a spin box.
-So, many of this class's parameters pertain to the display of the parameter value in a spin box
-
+On the Ferret GUI, a parameter is displayed in a spin box.
+So, many of this class's input arguments pertain to the display of the parameter value in a spin box.
 On the Ferret GUI, it is possible to adjust the value of a parameter
 in order to see how doing so changes the shape of the curve predicted by the model.
 
+The *ModelParameter* class has properties that are set by the following input arguments 
+when a model parameter object is created.
+
     shortName - the parameter's short name, usually an acronym.
+    
     longName - the parameter's full name.
+    
     units - the units of the parameter
+    
     defaultValue - the parameter's default value.
+    
     stepSize - when parameter's spinbox arrows are clicked, 
             the value of the parameter is incremented/decremented by 
             the value of stepSize.
+            
     precision - the number of decimal places displayed in the parameter's spinbox
+    
     minValue - the minimum value of the parameter's spinbox.
+    
     maxValue - the maximum value of the parameter's spinbox.
+    
     lowerConstraint - the lower constraint put on the parameter's value 
                     when the model is fitted to the curve formed by experimental data.
+                    
     upperConstraint - the upper constraint put on the parameter's value 
                     when the model is fitted to the curve formed by experimental data.
                     
-                    
 The following is a description of how to define one or more models, using the
-Python programming language, for use in Ferret. The folder **Ferret\Developer\ModelLibrary** contains a Python model library file called
-*SimpleModels.py* that contains the definitions of the models in the following discussion.  This model library file may be cloned 
-and edited to produce more model libraries.
-
-It is assumed that the person carrying out this work is an experienced Python developer.
+Python programming language, for use in Ferret. 
 
 ## Defining a simple linear model.
 In order to make a simple linear model available for use in Ferret, such as
@@ -115,17 +135,16 @@ In order to make a simple linear model available for use in Ferret, such as
     where a and b are parameters.
    
 the following steps must be followed.
-The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
-These 2 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s).
+The first module import is mandatory for model definition.
+*LineColours* will only be mandatory if you need to define model parameter(s).
     
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-
-2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
 
         import numpy as np
         def linearModel(x, a, b, constantsString=None):
@@ -145,7 +164,7 @@ will only be mandatory if you need to define model parameter(s).
                      
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
-4. Write the function, **setUpParametersForLinearModel** to return a list of model parameters.
+4. Write the function, **setUpParametersForLinearModel** to return a list of model parameters in your model library file.
 
         def setUpParametersForLinearMode():
             paramList = []
@@ -169,7 +188,7 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
             paramList.append(b)    
             return paramList
 
-5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables in your model library file.
     
         def setUpVariablesForAllModels():
             variablesList = []
@@ -180,6 +199,7 @@ The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModel
             variablesList.append(X2)
             return variablesList
 
+
 ## Defining a simple linear model that utilises the equation of a straight line.
 In order to make a simple linear model available for use in Ferret, such as
 
@@ -188,7 +208,7 @@ In order to make a simple linear model available for use in Ferret, such as
     where m is a parameters and c is a constant.
    
 the following steps must be followed.
-The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
@@ -197,7 +217,7 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
 
         import numpy as np
         def straightLineModel(x, m, constantsString):
@@ -218,15 +238,15 @@ will only be mandatory if you need to define model parameter(s).
                      
             return [straightLine]
                      
-The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
+The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class in your model library file and they return lists of parameters, variables and a constant respectively.
 
-4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters.
+4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters in your model library file.
 
        def setUpParameterForStraightLineModel():
             paramList = []
             m = ModelParameter(shortName='m',
                                 longName='m',
-                                units='s-1', 
+                                units='/s', 
                                 defaultValue=1.0, 
                                 stepSize=1, 
                                 precision=1, 
@@ -235,7 +255,7 @@ The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllMod
             paramList.append(m)    
             return paramList
 
-5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables in your model library file.
     
         def setUpVariablesForAllModels():
             variablesList = []
@@ -246,7 +266,7 @@ The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllMod
             variablesList.append(X2)
             return variablesList
 
-6. Write the function **setUpConstantForYAxisIntersection** that returns a list of model constants
+6. Write the function **setUpConstantForYAxisIntersection** that returns a list of model constants in your model library file.
 
         def setUpConstantForYAxisIntersection():
             constantList = []
@@ -263,7 +283,7 @@ In order to make a simple quadratic model available for use in Ferret, such as
     where a and b are parameters and c is a constant.
    
 the following steps must be followed.
-The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
@@ -272,7 +292,7 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
 
        import numpy as np
        def quadraticModel(x, a, b, constantsString):
@@ -295,7 +315,7 @@ will only be mandatory if you need to define model parameter(s).
                      
 The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
 
-4. Write the function, **setUpParametersForQuadraticModel** to return a list of model parameters.
+4. Write the function, **setUpParametersForQuadraticModel** to return a list of model parameters in your model library file.
 
        def setUpParametersForQuadraticModel():
             paramList = []
@@ -319,7 +339,7 @@ The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModel
             paramList.append(b)    
             return paramList
 
-5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables.
+5. Write the function, **setUpVariablesForAllModels** that returns a list of model variables in your model library file.
     
         def setUpVariablesForAllModels():
             variablesList = []
@@ -330,7 +350,7 @@ The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModel
             variablesList.append(X2)
             return variablesList
 
-6. Write the function **setUpConstantForYAxisIntersection** that returns a list of model constants
+6. Write the function **setUpConstantForYAxisIntersection** that returns a list of model constants in your model library file.
 
         def setUpConstantForYAxisIntersection():
             constantList = []
@@ -340,7 +360,7 @@ The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModel
             return constantList
 
 ## Defining a complex model that describes the function of the liver.
-The full implementation of this model can be found in the folder  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\MyModels.py**
 The following steps must be followed.
 
 1. Place the following import statements at the top of your model library file.     
@@ -350,7 +370,7 @@ will only be mandatory if you need to define model parameter(s). *LineColours* p
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model.  In order to comply with the needs
+2. Write a function that executes the mathematical model in your model library file.  In order to comply with the needs
 of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
 must have the following format as show in the definition of *HighFlowSingleInletGadoxetate2DSPGR_Rat*.
 
@@ -359,7 +379,7 @@ must have the following format as show in the definition of *HighFlowSingleInlet
 where 
 xData2DArray = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
                The formation of xData2DArray is performed in Ferret and the user does not
-               need to concern themself with this. This argument needs to be unpacked in
+               need to worry about this. This argument needs to be unpacked in
                the function; thus,
                
                t = xData2DArray[:,0]
@@ -367,10 +387,11 @@ xData2DArray = the time and input variable 1-D arrays stacked as columns into a 
               
 Ve, Kbh, Khe, = model parameters.  They need to be individually named as this is a requirment 
                 of the curve fitting function. 
+                
 constantsString = A string representation of a dictionary of constant name:value pairs.
                The formation of constantsString is performed in Ferret and the user does not
                need to concern themself with this.
-                This argument needs to be unpacked in the function; thus,
+               This argument needs to be unpacked in the function; thus,
              
                 constantsDict = eval(constantsString) 
                 TR, baseline, FA, r1, R10a, R10t = float(constantsDict['TR']), \
@@ -390,11 +411,11 @@ constantsString = A string representation of a dictionary of constant name:value
                          variablesList = setUpVariables())
                  return [HF1_2CFM_2DSPGR]
     
-The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class.
+The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class in your model library file.
 **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
 respectively.
 
-4. Write the function, **setUpParameters** to return a list of model parameters.
+4. Write the function, **setUpParameters** to return a list of model parameters in your model library file.
 
        def setUpParameters():
             paramList = []
@@ -420,7 +441,7 @@ respectively.
             return paramList
 
 
-5. Write the function, **setUpVariables** that returns a list of model variables. 
+5. Write the function, **setUpVariables** that returns a list of model variables in your model library file. 
 
         def setUpVariables():
             variablesList = []
@@ -434,7 +455,7 @@ respectively.
             
             return variablesList
 
-6. Write the function **setUpConstants** that returns a list of model constants.
+6. Write the function **setUpConstants** that returns a list of model constants in your model library file.
 
         def setUpConstants():
             constantList = []
