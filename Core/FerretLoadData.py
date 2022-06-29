@@ -74,13 +74,13 @@ class FerretLoadData(QWidget):
         """
         try:
             self.btnLoadModelLibrary = OpenFileButton(buttonLabel='Load Model Library',
+                                                      showButton=False,
                                                       toolTip='Opens file dialog box to select the model library file',
                                                       shortCut='Ctrl+C',
                                                       filesFilter = self.fileFilter.pythonFiles,
                                                       defaultDialogCaption='Select a model library',
                                                       defaultDirectory=defaultPathModelLibray)
             self.btnLoadModelLibrary.sigFileLoaded.connect(lambda filePath: self.LoadModelLibrary(filePath))
-            self.btnLoadModelLibrary.hide()
             self.mainLayout.addWidget(self.btnLoadModelLibrary)
         except Exception as e:
             print('Error in function setUpLoadModelLibraryButton: ' + str(e)) 
@@ -94,14 +94,13 @@ class FerretLoadData(QWidget):
         """
         try:
             self.btnLoadDataFile = OpenFileButton(buttonLabel='Load Data File',
-                                                      showButton=True,
+                                                      showButton=False,
                                                       toolTip='Opens file dialog box to select the data file',
                                                       shortCut='Ctrl+L',
                                                       filesFilter = self.fileFilter.csvFiles,
                                                       defaultDialogCaption='Select a CSV data file',
                                                       defaultDirectory=defaultDataFileFolder)
             self.btnLoadDataFile.sigFileLoaded.connect(lambda filePath: self.LoadDataFile(filePath))
-            self.btnLoadDataFile.hide()
             self.mainLayout.addWidget(self.btnLoadDataFile)
         except Exception as e:
             print('Error in function setUpLoadDataFileButton: ' + str(e)) 
