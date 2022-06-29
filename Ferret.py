@@ -1225,9 +1225,7 @@ class Ferret(QWidget):
                 self.btnFitModel.hide()
                 self.btnReset.hide()
                 self.groupBoxExport.setExportGroupBoxVisible(False)
-                ##if self.groupBoxConstants is not None:
                 self.groupBoxConstants.hide()
-                ##if self.groupBoxParameters is not None:
                 self.groupBoxParameters.hide()
             else:
                 if len(self.currentModelObject.constantsList) > 0:
