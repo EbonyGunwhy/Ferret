@@ -309,11 +309,15 @@ class Ferret(QWidget):
             self.currentModelObject = None
 
             #store dynamically created parameter widgets in lists
+            self.parameterLabelName = []
+            self.parameterLabelUnits = []
             self.parameterSpinBoxList = []
             self.parameterFixedCheckBoxList = []
             self.parameterIntervalLimitList = []
 
             #store dynamically created constants widgets in a list
+            self.constantsLabelName = []
+            self.constantsLabelUnits = []
             self.constantsWidgetList = []
 
             #store dynamically created variable widgets in lists
@@ -416,11 +420,11 @@ class Ferret(QWidget):
         #when the user selects a model in the dropdown list
         self.cmbModels.activated.connect(self.deleteVariableWidgets)
         self.cmbModels.activated.connect(self.getSelectedModelObject)
-        self.cmbModels.activated.connect(self.setUpModelVariableWidgits)
         self.cmbModels.activated.connect(self.UncheckFixParameterCheckBoxes)
         self.cmbModels.activated.connect(lambda: self.clearOptimisedParamaterList('cmbModels')) 
+        self.cmbModels.activated.connect(self.setUpModelVariableWidgits)
+        self.cmbModels.activated.connect(self.configureGUIForEachModel)
         self.cmbModels.activated.connect(self.displayFitModelButton)
-        self.cmbModels.activated.connect(self.configureGUIForEachModel) 
         self.modelHorizontalLayoutTopRow.addWidget(self.modelLabel)
         self.modelHorizontalLayoutTopRow.addWidget(self.cmbModels)
         self.variablesGridLayout = QGridLayout()
@@ -441,11 +445,9 @@ class Ferret(QWidget):
                 colNumber = 0
                 for obj in self.currentModelObject.variablesList:
                     self.label = ModelLabel(obj.shortName)
-                    self.label.show()
                     self.comboBox = ModelComboBox(obj.shortName, obj.longName)
                     self.comboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
                     self.comboBox.addItems(listDataNames)
-                    self.comboBox.show()   
                     self.variablesGridLayout.addWidget(self.label, 0, colNumber)
                     self.variablesGridLayout.addWidget( self.comboBox, 0, colNumber+1)
                     self.comboBox.activated.connect(self.lineGraph.plotGraph)
@@ -620,7 +622,6 @@ class Ferret(QWidget):
         self.paramGridLayout = QGridLayout()
         self.modelHorizontalLayoutMiddleRow.addWidget(self.groupBoxParameters)
         self.groupBoxParameters.setLayout(self.paramGridLayout)
-        self.setUpParameterGridHeader()
 
 
     def connectLineGraphSignalsToSlots(self):
@@ -1085,11 +1086,13 @@ class Ferret(QWidget):
                 currentRow = 1
                 for obj in self.currentModelObject.constantsList:
                     self.labelConstantName = ModelLabel(obj.shortName)
-                    self.labelConstantName.show()
+                    self.labelConstantName.hide()
+                    self.constantsLabelName.append(self.labelConstantName)
                     self.constantsGridLayout.addWidget(self.labelConstantName,currentRow,0, alignment=Qt.AlignBottom)
                     if len(obj.listValues) == 0:
                         #The constant can take any decimal value
                         self.spinBox = ModelParameterSpinBox(obj.shortName)
+                        self.spinBox.hide()
                         self.spinBox.setDecimals(obj.precision)
                         self.spinBox.setRange(obj.minValue, obj.maxValue)
                         self.spinBox.setSingleStep(obj.stepSize)
@@ -1102,6 +1105,7 @@ class Ferret(QWidget):
                         #The constant has a set of discrete values that 
                         #should be displayed in a drop down list.
                         self.comboBox = ModelComboBox(obj.shortName)
+                        self.comboBox.hide()
                         self.comboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
                         self.comboBox.addItems(obj.listValues)
                         #Display default value
@@ -1111,9 +1115,11 @@ class Ferret(QWidget):
                         self.comboBox.activated.connect(self.lineGraph.plotGraph)
                         self.constantsWidgetList.append(self.comboBox)
                     self.labelConstantUnits = ModelLabel(obj.units)
-                    self.labelConstantUnits.show()
+                    self.labelConstantUnits.hide()
                     self.constantsGridLayout.addWidget(self.labelConstantUnits,currentRow,2, alignment=Qt.AlignBottom | Qt.AlignLeft)
+                    self.constantsLabelUnits.append(self.labelConstantUnits)
                     currentRow+=1
+                self.makeConstantsWidgetsVisible()
         except Exception as e:
             print('Error in function FERRET setUpConstantsLabelsAndWidgets: ' + str(e) )
             logger.error('Error in function FERRET setUpConstantsLabelsAndWidgets: ' + str(e) )
@@ -1128,12 +1134,15 @@ class Ferret(QWidget):
         logger.info('function FERRET SetUpParameterLabelsAndSpinBoxes called. ')
         try:
             self.clearParameterGridLayout()
+            self.setUpParameterGridHeader()
             if len(self.currentModelObject.parameterList) > 0:
                 currentRow = 1
                 for obj in self.currentModelObject.parameterList:
                     self.labelParamName = ModelLabel(obj.shortName)
-                    self.labelParamName.show()
+                    self.labelParamName.hide()
+                    self.parameterLabelName.append(self.labelParamName)
                     self.spinBox = ModelParameterSpinBox(obj.shortName)
+                    self.spinBox.hide()
                     self.spinBox.setDecimals(obj.precision)
                     self.spinBox.setRange(obj.minValue, obj.maxValue)
                     self.spinBox.setSingleStep(obj.stepSize)
@@ -1145,11 +1154,13 @@ class Ferret(QWidget):
                     else:
                         self.spinBox.setSuffix('')
                     self.labelParamUnits = ModelLabel(obj.units)
+                    self.labelParamUnits.hide()
+                    self.parameterLabelUnits.append(self.labelParamUnits)
                     self.chkBox = ModelParameterCheckBox(obj.shortName)
                     self.chkBox.setChecked(False)
-
+                    self.chkBox.hide()
                     self.labelConfLimits = ModelParameterConfLimits(obj.shortName)
-
+                    self.labelConfLimits.hide()
                     self.parameterSpinBoxList.append(self.spinBox)
                     self.parameterFixedCheckBoxList.append(self.chkBox)
                     self.parameterIntervalLimitList.append(self.labelConfLimits)
@@ -1160,7 +1171,7 @@ class Ferret(QWidget):
                     self.paramGridLayout.addWidget(self.chkBox,currentRow,3, alignment=Qt.AlignBottom)
                     self.paramGridLayout.addWidget(self.labelConfLimits,currentRow,4, alignment=Qt.AlignBottom )
                     currentRow+=1
-         
+                self.makeParameterWidgetsVisible()
         except Exception as e:
             print('Error in function FERRET SetUpParameterLabelsAndSpinBoxes: ' + str(e) )
             logger.error('Error in function FERRET SetUpParameterLabelsAndSpinBoxes: ' + str(e) )
@@ -1191,10 +1202,26 @@ class Ferret(QWidget):
                 if child.widget():
                         child.widget().deleteLater()
             #rewrite header row
-            self.setUpParameterGridHeader()
+            #self.setUpParameterGridHeader()
             self.parameterSpinBoxList = []
             self.parameterFixedCheckBoxList = []
             self.parameterIntervalLimitList = []
+            self.parameterLabelName = []
+            self.parameterLabelUnits = []
+
+
+    def makeConstantsWidgetsVisible(self):
+        for widget in (self.constantsWidgetList + self.constantsLabelName + self.constantsLabelUnits):
+            widget.show()
+
+
+    def makeParameterWidgetsVisible(self):
+        for widget in (self.parameterSpinBoxList + \
+                        self.parameterFixedCheckBoxList + \
+                        self.parameterIntervalLimitList + \
+                        self.parameterLabelName + \
+                        self.parameterLabelUnits):
+            widget.show()
 
 
     def clearConstantsGridLayout(self):
@@ -1209,6 +1236,8 @@ class Ferret(QWidget):
                     if child.widget():
                             child.widget().deleteLater()
                 self.constantsWidgetList = []
+                self.constantsLabelName = []
+                self.constantsLabelUnits = []
         except Exception as e:
             print('Error in function FERRET clearConstantsGridLayout: ' + str(e) )
             logger.error('Error in function FERRET clearConstantsGridLayout: ' + str(e) )
@@ -1232,12 +1261,12 @@ class Ferret(QWidget):
                 self.groupBoxConstants.hide()
                 self.groupBoxParameters.hide()
             else:
+                self.setUpConstantsLabelsAndWidgets()
+                self.SetUpParameterLabelsAndSpinBoxes()
                 if len(self.currentModelObject.constantsList) > 0:
                     self.groupBoxConstants.show()
                 if len(self.currentModelObject.parameterList) > 0:
                     self.groupBoxParameters.show()
-                self.setUpConstantsLabelsAndWidgets()
-                self.SetUpParameterLabelsAndSpinBoxes()
                 self.lineGraph.plotGraph()
                 self.btnReset.show()
         except Exception as e:

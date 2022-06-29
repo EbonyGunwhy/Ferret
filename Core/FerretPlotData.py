@@ -268,6 +268,8 @@ class FerretPlotData(LineGraph):
             if bestFitResults.covar.size:
                 self._CurveFitCalculate95ConfidenceLimits(numDataPoints, numParams, 
                                     bestFitResults.best_values, bestFitResults.covar)
+        except RuntimeWarning as rtw:
+            print ("Runtime Warning : " + str(rtw))
         except ValueError as ve:
             print ('Value Error: curveFit with model ' + modelName + ': '+ str(ve))
             logger.error('Value Error: curveFit with model ' + modelName + ': '+ str(ve))
