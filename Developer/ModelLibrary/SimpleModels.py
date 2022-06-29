@@ -140,7 +140,7 @@ def setUpConstantForYAxisIntersection():
     """
     constantList = []
     c = ModelConstant(shortName='c', longName='Y Axis Intersection', defaultValue=1.0, stepSize=10.0,
-                       precision=1, units = None, minValue=0, maxValue=10000, listValues=[])
+                       precision=1, units = 'mg/l', minValue=0, maxValue=10000, listValues=[])
     constantList.append(c)
     return constantList
 
