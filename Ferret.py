@@ -517,8 +517,8 @@ class Ferret(QWidget):
         self.lblFix = QLabel("<u>Fix</u>")
         self.lblConfInt.setAlignment(QtCore.Qt.AlignRight)
         self.lblFix.setAlignment(QtCore.Qt.AlignLeft)
-        self.paramGridLayout.addWidget(self.lblFix, 0, 2)
-        self.paramGridLayout.addWidget(self.lblConfInt, 0, 3)
+        self.paramGridLayout.addWidget(self.lblFix, 0, 3)
+        self.paramGridLayout.addWidget(self.lblConfInt, 0, 4)
 
 
     def setUpExportGroupBox(self):
@@ -1110,6 +1110,9 @@ class Ferret(QWidget):
                                                            alignment=Qt.AlignBottom | Qt.AlignLeft)
                         self.comboBox.activated.connect(self.lineGraph.plotGraph)
                         self.constantsWidgetList.append(self.comboBox)
+                    self.labelConstantUnits = ModelLabel(obj.units)
+                    self.labelConstantUnits.show()
+                    self.constantsGridLayout.addWidget(self.labelConstantUnits,currentRow,2, alignment=Qt.AlignBottom | Qt.AlignLeft)
                     currentRow+=1
         except Exception as e:
             print('Error in function FERRET setUpConstantsLabelsAndWidgets: ' + str(e) )
@@ -1141,7 +1144,7 @@ class Ferret(QWidget):
                         self.spinBox.setSuffix('%')
                     else:
                         self.spinBox.setSuffix('')
-
+                    self.labelParamUnits = ModelLabel(obj.units)
                     self.chkBox = ModelParameterCheckBox(obj.shortName)
                     self.chkBox.setChecked(False)
 
@@ -1153,8 +1156,9 @@ class Ferret(QWidget):
                 
                     self.paramGridLayout.addWidget(self.labelParamName,currentRow,0, alignment=Qt.AlignBottom)
                     self.paramGridLayout.addWidget(self.spinBox,currentRow,1, alignment=Qt.AlignBottom )
-                    self.paramGridLayout.addWidget(self.chkBox,currentRow,2, alignment=Qt.AlignBottom)
-                    self.paramGridLayout.addWidget(self.labelConfLimits,currentRow,3, alignment=Qt.AlignBottom )
+                    self.paramGridLayout.addWidget(self.labelParamUnits,currentRow,2, alignment=Qt.AlignBottom | Qt.AlignLeft)
+                    self.paramGridLayout.addWidget(self.chkBox,currentRow,3, alignment=Qt.AlignBottom)
+                    self.paramGridLayout.addWidget(self.labelConfLimits,currentRow,4, alignment=Qt.AlignBottom )
                     currentRow+=1
          
         except Exception as e:
