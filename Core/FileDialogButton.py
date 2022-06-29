@@ -38,7 +38,7 @@ class OpenFileButton(QPushButton):
     sigFileLoaded = pyqtSignal(str)
     def __init__(self, 
                  buttonLabel='Load File', 
-                 showButton=True,
+                 showButton=False,
                  toolTip='Opens a file dialog box for selection of a file',
                  shortCut="Ctrl+L",
                  xMaxSize = 300,
@@ -113,7 +113,7 @@ class SaveFileButton(QPushButton):
     sigFileSaved = pyqtSignal(str)
     def __init__(self, 
                  buttonLabel='Save File', 
-                 showButton=True,
+                 showButton=False,
                  toolTip='Opens a file dialog box for saving of a file',
                  shortCut="Ctrl+S",
                  xMaxSize = 300,
