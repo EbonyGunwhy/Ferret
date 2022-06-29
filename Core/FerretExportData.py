@@ -72,16 +72,17 @@ class FerretExportData(QWidget):
     def setModelName(self, name):
         self._modelName = name
 
+
     def setUpExportGroupBox(self):
         """
         This function creates three push buttons contained within 
         the Export Data group box.
         """
         self.groupBoxExport = QGroupBox('Export Data')
-        self.groupBoxExport.setAlignment(QtCore.Qt.AlignHCenter)
-        self.mainLayout.addWidget(self.groupBoxExport)
         # The group box is hidden until a model is selected.
         self.groupBoxExport.setVisible(False)
+        self.groupBoxExport.setAlignment(QtCore.Qt.AlignHCenter)
+        self.mainLayout.addWidget(self.groupBoxExport)
         self.exportHorizontalLayout = QHBoxLayout()
         self.exportHorizontalLayout.setSpacing(0)
         self.groupBoxExport.setLayout(self.exportHorizontalLayout)
@@ -89,8 +90,12 @@ class FerretExportData(QWidget):
         self.setUpButtonSaveDICOM()
         self.setUpSaveReportButton()
 
+
     def setExportGroupBoxVisible(self, bool):
         self.groupBoxExport.setVisible(bool)
+        self.btnSaveCSV.setVisible(bool)
+        self.btnSaveReport.setVisible(bool)
+        self.btnSaveDICOM.setVisible(bool)
 
 
     def setUpSaveCSVButton(self):
@@ -98,7 +103,7 @@ class FerretExportData(QWidget):
         Sets up the button for saving plot data to a CSV file.
         """
         self.btnSaveCSV = SaveFileButton(buttonLabel='Save plot data to CSV file', 
-                 showButton=True,
+                 showButton=False,
                  toolTip='Save the data plotted on the graph to a CSV file',
                  shortCut="Ctrl+S",
                  xMaxSize = 400,
@@ -115,7 +120,7 @@ class FerretExportData(QWidget):
         Sets up the button for creating a PDF report.
         """
         self.btnSaveReport = SaveFileButton(buttonLabel='Save Report in PDF Format',
-                 showButton=True,
+                 showButton=False,
                  toolTip='Insert an image of the graph opposite and associated data in a PDF file',
                  shortCut="Ctrl+R",
                  xMaxSize = 400,
@@ -133,6 +138,7 @@ class FerretExportData(QWidget):
         Currently this button has no functionality attached to it.
         """
         self.btnSaveDICOM = QPushButton('Save plot data to DICOM')
+        self.btnSaveDICOM.hide()
         self.btnSaveDICOM.setMaximumSize(QtCore.QSize(350,45))
         self.btnSaveDICOM.setToolTip('Save the data plotted TO DICOM')
         self.exportHorizontalLayout.addWidget(self.btnSaveDICOM)

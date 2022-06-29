@@ -324,14 +324,14 @@ class Ferret(QWidget):
             self.optimisedParamaterDict = {}
             
             self.setUpMainLayouts()
-
+            
             # Set up the graph to plot signal/time data on
             #  the right-hand side vertical layout
             self.setUpPlotArea()
-
+            
             #Add widgets to the left-hand side vertical layout
             self.setUpLeftVerticalLayout()
-
+            
             logger.info("FERRET GUI created successfully.")
         except Exception as e:
             print('Error creating FERRET object: ' + str(e)) 
@@ -528,6 +528,7 @@ class Ferret(QWidget):
         """
         try:
             self.groupBoxExport = FerretExportData()
+            self.groupBoxExport.setExportGroupBoxVisible(False)
             self.verticalLayoutLeft.addWidget(self.groupBoxExport)
             self.groupBoxExport.sigPrepareForDataExport.connect(self.collectDataForExport)
         except Exception as e:
@@ -1251,6 +1252,7 @@ def main():
     window = QMainWindow()
     ferretWidget = Ferret(statusBar=window.statusBar(),
                          dataFileFolder=returnDataFileFolder()) #, modelList=returnModelList()
+    
     window.setCentralWidget(ferretWidget)
     window.setStyleSheet(styleSheet.TRISTAN_GREY)
     window.showMaximized()
