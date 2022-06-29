@@ -61,7 +61,7 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
            (tools.spgr2d_func, x0=0, 
             args = (r1, FA, TR, R10a, baseline, Sa[p])) 
             for p in np.arange(0,len(t)))]
-
+        
         R1a = np.squeeze(R1a)
         
         ca = (R1a - R10a)/r1
@@ -81,6 +81,8 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
         
         #Return tissue signal relative to the baseline St/St_baseline
         return(St_rel) 
+    except RuntimeWarning as rtw:
+            print ("Runtime Warning : " + str(rtw))
     except Exception as e:
         print('Error in function HighFlowSingleInletGadoxetate2DSPGR_Rat ' + str(e) )
                 
@@ -142,6 +144,8 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
         St_rel = tools.spgr3d_func_inv(r1, FA, TR, R10t, ct)
         
         return(St_rel) #Returns tissue signal relative to the baseline St/St_baseline
+    except RuntimeWarning as rtw:
+            print ("Runtime Warning : " + str(rtw))
     except Exception as e:
         print('Error in function HighFlowSingleInletGadoxetate3DSPGR_Rat ' + str(e) )
 

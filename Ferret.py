@@ -505,7 +505,6 @@ class Ferret(QWidget):
         self.btnFitModel = QPushButton('Fit Model')
         self.btnFitModel.setMaximumSize(QtCore.QSize(130,45))
         self.btnFitModel.setToolTip('Fit the selected model to the data')
-        self.btnFitModel.hide()
         self.btnFitModel.clicked.connect(self.lineGraph.curveFit)
         self.modelHorizontalLayoutReset.addWidget(self.btnFitModel)
 
@@ -760,12 +759,13 @@ class Ferret(QWidget):
         """Displays the Fit Model, Save CSV and Save PFD Report
        buttons if a model selected.  Otherwise hides them."""
         try:
-            modelName = str(self.cmbModels.currentText())
-            if self.currentModelObject:
-                #A model has been selected
-                logger.info("Function FERRET.displayFitModelButton called. Model is " + modelName)
-                self.btnFitModel.show() 
-                self.groupBoxExport.setExportGroupBoxVisible(True)
+            flag = True
+            for dropDownList in self.variableComboList:
+                if dropDownList.currentText() == FerretConstants.PLEASE_SELECT:
+                    flag = False
+                    break
+            self.btnFitModel.setVisible(flag)
+            self.groupBoxExport.setExportGroupBoxVisible(flag)
         except Exception as e:
             print('Error in function FERRET.displayFitModelButton: ' + str(e))
             logger.error('Error in function FERRET.displayFitModelButton: ' + str(e))
