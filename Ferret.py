@@ -505,6 +505,7 @@ class Ferret(QWidget):
         self.btnFitModel = QPushButton('Fit Model')
         self.btnFitModel.setMaximumSize(QtCore.QSize(130,45))
         self.btnFitModel.setToolTip('Fit the selected model to the data')
+        ##self.btnFitModel.clicked.connect(self.hideSolverMessage())
         self.btnFitModel.clicked.connect(self.lineGraph.curveFit)
         self.modelHorizontalLayoutReset.addWidget(self.btnFitModel)
 
@@ -630,8 +631,21 @@ class Ferret(QWidget):
         self.lineGraph.sigGetCurveFitData.connect(self.buildConstantsString)
         self.lineGraph.sigCurveFittingComplete.connect(lambda listResults: 
                                                        self.postCurveFittingProcessing(listResults))
+        self.lineGraph.sigMessageReturnedFromSolver.connect(lambda msg: self.displaySolverMessage(msg))
         self.lineGraph.sigReturnOptimumParamDict.connect(lambda optParamDict:
                                                          self.display95ConfidenceLimits(optParamDict))
+
+
+    def displaySolverMessage(self, msg):
+        self.messageLabel.setText(msg)
+        self.messageLabel.show()
+        self.groupBoxMessage.show()
+
+
+    def hideSolverMessage(self):
+        self.messageLabel.setText('')
+        self.messageLabel.hide()
+        self.groupBoxMessage.hide()
 
 
     def setUpLayoutsInModelGroupBox(self):
@@ -646,13 +660,30 @@ class Ferret(QWidget):
         # for selecting the model and its variables
         self.modelHorizontalLayoutTopRow = QHBoxLayout()
         self.modelHorizontalLayoutMiddleRow = QHBoxLayout()
+        self.modelHorizontalLayoutMessageRow = QHBoxLayout()
         self.modelHorizontalLayoutReset = QHBoxLayout()
         #The above horizontal layouts are stacked in the following vertical layout
         self.modelVerticalLayout = QVBoxLayout()
         self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutTopRow)
         self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutMiddleRow)
+        self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutMessageRow)
         self.modelVerticalLayout.addLayout(self.modelHorizontalLayoutReset)
         self.groupBoxModel.setLayout(self.modelVerticalLayout)
+
+
+    def setUpSolverMessageGroupBox(self):
+        try:
+            self.groupBoxMessage = QGroupBox('Message from equation solver function')
+            self.groupBoxMessage.hide()
+            self.messageLabel = QLabel()
+            self.messageLabel.hide()
+            self.groupBoxMessageLayout = QHBoxLayout()
+            self.groupBoxMessageLayout.addWidget(self.messageLabel, alignment=Qt.AlignCenter)
+            self.groupBoxMessage.setLayout(self.groupBoxMessageLayout)
+            self.modelHorizontalLayoutMessageRow.addWidget(self.groupBoxMessage)
+        except Exception as e:
+            print('Error in FERRET.setUpSolverMessageGroupBox: ' + str(e)) 
+            logger.error('Error in FERRET.setUpSolverMessageGroupBox: ' + str(e))
 
 
     def setUpModelGroupBox(self):    
@@ -672,6 +703,8 @@ class Ferret(QWidget):
             self.setUpParametersGroupBox()
             
             self.setUpModelDropDownList()
+
+            self.setUpSolverMessageGroupBox()
 
             self.setUpResetButton()
 
@@ -1260,6 +1293,7 @@ class Ferret(QWidget):
                 self.groupBoxExport.setExportGroupBoxVisible(False)
                 self.groupBoxConstants.hide()
                 self.groupBoxParameters.hide()
+                self.hideSolverMessage()
             else:
                 self.setUpConstantsLabelsAndWidgets()
                 self.SetUpParameterLabelsAndSpinBoxes()

@@ -282,7 +282,7 @@ def returnModelList():
                      parameterList = setUpParameters(), 
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables(),
-                     returnMessageFunction=returnLastMessage
+                     returnMessageFunction=returnSolverMessage
                      )
       
         
@@ -292,7 +292,7 @@ def returnModelList():
                      parameterList = setUpParameters(),  
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables(),
-                     returnMessageFunction=returnLastMessage)
+                     returnMessageFunction=returnSolverMessage)
     
     return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
 
@@ -305,5 +305,5 @@ def returnDataFileFolder():
     return 'FerretData'
 
 
-def returnLastMessage():
+def returnSolverMessage():
     return lastMessage
