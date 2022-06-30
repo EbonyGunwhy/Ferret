@@ -35,7 +35,7 @@ class Model:
                 associated with the model
     """
     def __init__(self, shortName, longName, modelFunction, xDataInputOnly=False,
-                 parameterList=[], constantsList=[], variablesList=[]):
+                 parameterList=[], constantsList=[], variablesList=[], returnMessageFunction=None):
         self._shortName = shortName
         self._longName = longName
         self._xDataInputOnly = xDataInputOnly
@@ -43,6 +43,8 @@ class Model:
         self._constantsList = constantsList #list of parameter objects
         self._variablesList = variablesList #list of variable objects
         self._modelFunction = modelFunction #function containing the mathematical model
+        self._returnMessageFunction = returnMessageFunction #function returning a message 
+                                                            #from the equation solving function
 
     def __repr__(self):
         """Represents this class's objects as a string"""
@@ -87,6 +89,10 @@ class Model:
     @property
     def modelFunction(self):
         return self._modelFunction
+
+    @property
+    def returnMessageFunction(self):
+        return self._returnMessageFunction
 
     def getNumberConstants(self):
         return len(self._constantsList)

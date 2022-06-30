@@ -43,9 +43,11 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
             time points in array 'time'.
     """ 
     try:
+        global lastMessage
+        lastMessage = ''
         t = inputData[:,0]
         Sa = inputData[:,1]
-         # Unpack SPGR model constants from 
+            # Unpack SPGR model constants from 
         # a string representation of a dictionary
         # of constants and their values
         constantsDict = eval(constantsString) 
@@ -54,14 +56,13 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
         float(constantsDict['FA']), float(constantsDict['r1']), \
         float(constantsDict['R10a']), float(constantsDict['R10t']) 
         # Convert to concentrations
-        # n_jobs set to 1 to turn off parallel processing
-        # because parallel processing caused a segmentation
-        # fault in the compiled version of this application. 
-        # This is not a problem in the uncompiled script
-        R1a = [Parallel(n_jobs=1)(delayed(scipyTools.fsolve)
-           (tools.spgr2d_func, x0=0, 
+        results = [scipyTools.fsolve(tools.spgr2d_func, x0=0, 
             args = (r1, FA, TR, R10a, baseline, Sa[p])) 
-            for p in np.arange(0,len(t)))]
+            for p in np.arange(0,len(t))]
+
+        R1a= [item[0] for item in results]
+        messages = [item[1] for item in results]
+        lastMessage = messages[len(messages)-1]
         
         R1a = np.squeeze(R1a)
         
@@ -112,6 +113,8 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
     #try:
         #exceptionHandler.modelFunctionInfoLogger()
     try:
+        global lastMessage
+        lastMessage = ''
         t = inputData[:,0]
         Sa = inputData[:,1]
         # Unpack SPGR model constants from 
@@ -122,15 +125,16 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
         int(constantsDict['baseline']),\
         float(constantsDict['FA']), float(constantsDict['r1']), \
         float(constantsDict['R10a']), float(constantsDict['R10t']) 
-        # Convert to concentrations
-        # n_jobs set to 1 to turn off parallel processing
-        # because parallel processing caused a segmentation
-        # fault in the compiled version of this application.
-        # This is not a problem in the uncompiled script
-        R1a = [Parallel(n_jobs=1)(delayed(scipyTools.fsolve)
-          (tools.spgr3d_func, x0=0, 
-           args = (FA, TR, R10a, baseline, Sa[p])) 
-           for p in np.arange(0,len(t)))]
+       
+       # Convert to concentrations
+        results = [scipyTools.fsolve(tools.spgr3d_func, x0=0, 
+            args = (FA, TR, R10a, baseline, Sa[p])) 
+            for p in np.arange(0,len(t))]
+
+        R1a= [item[0] for item in results]
+        messages = [item[1] for item in results]
+        lastMessage = messages[len(messages)-1]
+
         R1a = np.squeeze(R1a)
         
         ca = (R1a - R10a)/r1
@@ -277,7 +281,8 @@ def returnModelList():
                      modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
                      parameterList = setUpParameters(), 
                      constantsList = setUpConstants(),
-                     variablesList = setUpVariables()
+                     variablesList = setUpVariables(),
+                     returnMessageFunction=returnLastMessage
                      )
       
         
@@ -286,8 +291,8 @@ def returnModelList():
                      modelFunction = HighFlowSingleInletGadoxetate3DSPGR_Rat,
                      parameterList = setUpParameters(),  
                      constantsList = setUpConstants(),
-                     variablesList = setUpVariables()
-                     )
+                     variablesList = setUpVariables(),
+                     returnMessageFunction=returnLastMessage)
     
     return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
 
@@ -298,3 +303,7 @@ def returnDataFileFolder():
     CSV data files that form the input to Ferret.
     """
     return 'FerretData'
+
+
+def returnLastMessage():
+    return lastMessage

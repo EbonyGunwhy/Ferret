@@ -9,9 +9,8 @@ from numpy import (atleast_1d, dot, take, triu, shape, eye,
 from scipy.linalg import svd, cholesky, solve_triangular, LinAlgError, inv
 from scipy._lib._util import _asarray_validated, _lazywhere
 from scipy._lib._util import getfullargspec_no_self as _getfullargspec
-from scipy.optimize import OptimizeResult,  OptimizeWarning #_check_unknown_options,
+from scipy.optimize import OptimizeResult,  OptimizeWarning 
 from scipy.optimize._lsq import least_squares
-# from ._lsq.common import make_strictly_feasible
 from scipy.optimize._lsq.least_squares import prepare_bounds
 
 error = _minpack.error
@@ -163,19 +162,21 @@ def fsolve(func, x0, args=(), fprime=None, full_output=0,
         info = dict((k, res.get(k))
                     for k in ('nfev', 'njev', 'fjac', 'r', 'qtf') if k in res)
         info['fvec'] = res['fun']
-        return x, info, res['status'], res['message']
+        return x,  'Solution Successful'# res['message']   #info, res['status'],
     else:
-        status = res['status']
+        ##status = res['status']
         msg = res['message']
-        if status == 0:
-            raise TypeError(msg)
-        elif status == 1:
-            pass
-        elif status in [2, 3, 4, 5]:
-            warnings.warn(msg, RuntimeWarning)
-        else:
-            raise TypeError(msg)
-        return res['x']
+        #if status == 0:
+        #    raise TypeError(msg)
+        #elif status == 1:
+        #    pass
+        #elif status in [2, 3, 4, 5]:
+        #    warnings.warn(msg, RuntimeWarning)
+        #else:
+        #    raise TypeError(msg)
+        #print("In fsolve res= ",res)
+
+        return  res['x'], res['message']
 
 
 def _root_hybr(func, x0, args=(), jac=None,
@@ -216,7 +217,6 @@ def _root_hybr(func, x0, args=(), jac=None,
         variables.
 
     """
-   ## _check_unknown_options(unknown_options)
     epsfcn = eps
 
     x0 = asarray(x0).flatten()

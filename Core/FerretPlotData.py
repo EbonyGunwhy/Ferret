@@ -164,6 +164,7 @@ class FerretPlotData(LineGraph):
                 timeInputConcs2DArray = np.column_stack((arrayTimes, arrayModelInputSignals))
                     
             listModelConcentrations = modelFunction(timeInputConcs2DArray, *parameterArray, self._constantsString)
+            print("message=",self._currentModelObject.returnMessageFunction())
             if listModelConcentrations is not None:
                 self.plotData(arrayTimes, listModelConcentrations, 
                                         lineStyle=LineColours.greenDashed, 
