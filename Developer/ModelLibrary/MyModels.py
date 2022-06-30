@@ -6,9 +6,10 @@ mathematical model.
 """
 #Python libraries that support running the models
 import numpy as np
-from scipy.optimize import fsolve
+#from scipy.optimize import fsolve
 from joblib import Parallel, delayed
 import SupportModules.MathsTools  as tools
+import SupportModules.ScipyMathsTools  as scipyTools
 
 #The following 2 module imports are mandatory for model definition.
 #Note that modules are imported as parentPackage.module.
@@ -57,7 +58,7 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
         # because parallel processing caused a segmentation
         # fault in the compiled version of this application. 
         # This is not a problem in the uncompiled script
-        R1a = [Parallel(n_jobs=1)(delayed(fsolve)
+        R1a = [Parallel(n_jobs=1)(delayed(scipyTools.fsolve)
            (tools.spgr2d_func, x0=0, 
             args = (r1, FA, TR, R10a, baseline, Sa[p])) 
             for p in np.arange(0,len(t)))]
@@ -126,7 +127,7 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
         # because parallel processing caused a segmentation
         # fault in the compiled version of this application.
         # This is not a problem in the uncompiled script
-        R1a = [Parallel(n_jobs=1)(delayed(fsolve)
+        R1a = [Parallel(n_jobs=1)(delayed(scipyTools.fsolve)
           (tools.spgr3d_func, x0=0, 
            args = (FA, TR, R10a, baseline, Sa[p])) 
            for p in np.arange(0,len(t)))]
