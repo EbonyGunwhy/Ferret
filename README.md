@@ -276,9 +276,9 @@ The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllMod
 ## Defining a simple quadratic model.
 In order to make a simple quadratic model available for use in Ferret, such as
 
-    y = ax^2 + bx + c
+$$y = ax^2 + bx + c$$
    
-    where a and b are parameters and c is a constant.
+where a and b are parameters and c is a constant.
    
 the following steps must be followed.
 The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
