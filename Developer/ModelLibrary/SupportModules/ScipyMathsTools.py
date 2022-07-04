@@ -164,18 +164,7 @@ def fsolve(func, x0, args=(), fprime=None, full_output=0,
         info['fvec'] = res['fun']
         return x,  'Solution Successful'# res['message']   #info, res['status'],
     else:
-        ##status = res['status']
         msg = res['message']
-        #if status == 0:
-        #    raise TypeError(msg)
-        #elif status == 1:
-        #    pass
-        #elif status in [2, 3, 4, 5]:
-        #    warnings.warn(msg, RuntimeWarning)
-        #else:
-        #    raise TypeError(msg)
-        #print("In fsolve res= ",res)
-
         return  res['x'], res['message']
 
 
