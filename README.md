@@ -294,11 +294,13 @@ the following steps must be followed.
 The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
-These 2 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s).
+These 3 module imports are mandatory for model definition. Although *LineColours*
+will only be mandatory if you need to define model parameter(s). Additionally, *ScipyMathsTools* 
+will only be mandatory if you need to use the **fsolve** fuction to solve your mathematical model.
     
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
+        import SupportModules.ScipyMathsTools  as scipyTools
 
 2. Write a function that executes the mathematical model in your model library file.  
 
@@ -386,16 +388,16 @@ will only be mandatory if you need to define model parameter(s). *LineColours* p
 of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
 must have the following format as show in the definition of *HighFlowSingleInletGadoxetate2DSPGR_Rat*.
 
-        def HighFlowSingleInletGadoxetate2DSPGR_Rat(xData2DArray, Ve, Kbh, Khe, constantsString):
+        def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsString):
 
 where 
-xData2DArray = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
-               The formation of xData2DArray is performed in Ferret and the user does not
-               need to worry about this. This argument needs to be unpacked in
-               the function; thus,
+inputData = the time and input variable 1-D arrays stacked as columns into a 2-D array. 
+               The formation of inputData is performed in Ferret and the user does not
+               need to worry about this. The input argument name **inputData** must be used to satisfy the needs of the curve fitting function used in Ferret.
+               This argument needs to be unpacked in the function; thus,
                
-               t = xData2DArray[:,0]
-               Sa = xData2DArray[:,1]
+               t = inputData[:,0]
+               Sa = inputData[:,1]
               
 Ve, Kbh, Khe, = model parameters.  They need to be individually named as this is a requirment 
                 of the curve fitting function. 
@@ -410,6 +412,7 @@ constantsString = A string representation of a dictionary of constant name:value
                 int(constantsDict['baseline']),\
                 float(constantsDict['FA']), float(constantsDict['r1']), \
                 float(constantsDict['R10a']), float(constantsDict['R10t'])  
+
 
 
 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
