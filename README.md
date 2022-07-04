@@ -47,6 +47,8 @@ when a model object is created.
 
     variablesList - list of the variable objects that describe each of the variables
                 associated with the model. This argument is optional.
+                
+    returnMessageFunctionName - a function returning messages from the equation solving function passed into the model object as an object.
 
 ### Model Variable class
 The *ModelVariable* class has properties that are set by the following input arguments 
@@ -142,11 +144,13 @@ The first module import is mandatory for model definition.
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+2. Write a function that executes the mathematical model in your model library file. 
 
         import numpy as np
-        def linearModel(x, a, b, constantsString=None):
-             return np.multiply(x,a) + b
+        def linearModel(inputData, a, b, constantsString=None):
+             return np.multiply(inputData,a) + b
+             
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
