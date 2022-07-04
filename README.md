@@ -441,13 +441,12 @@ docstring for further details.  In this model function, its usuage takes the fol
                          parameterList = setUpParameters(), 
                          constantsList = setUpConstants(),
                          variablesList = setUpVariables(),
-                         returnMessageFunction=None)
+                         returnMessageFunction=returnSolverMessage)
                  return [HF1_2CFM_2DSPGR]
  
- The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.
-The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class in your model library file.
-**setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
-respectively.
+ The input argument **returnMessageFunction** is set to name of the function **returnSolverMessage** because this mathematical model must be solved by the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py**.  **fsolve** returns messages on the progress of the solution to the GUI via the function passed as an object to **returnMessageFunction**.
+The functions **setUpParameters**, **setUpConstants**, **setUpVariables** & **returnSolverMessage** are defined outside the class in your model library file.
+**setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects respectively. 
 
 4. Write the function, **setUpParameters** to return a list of model parameters in your model library file.
 
