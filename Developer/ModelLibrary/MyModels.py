@@ -43,11 +43,12 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
             time points in array 'time'.
     """ 
     try:
+        #mandatory global string variable
         global lastMessage
         lastMessage = ''
         t = inputData[:,0]
         Sa = inputData[:,1]
-            # Unpack SPGR model constants from 
+        # Unpack SPGR model constants from 
         # a string representation of a dictionary
         # of constants and their values
         constantsDict = eval(constantsString) 
@@ -55,11 +56,14 @@ def HighFlowSingleInletGadoxetate2DSPGR_Rat(inputData, Ve, Kbh, Khe, constantsSt
         int(constantsDict['baseline']),\
         float(constantsDict['FA']), float(constantsDict['r1']), \
         float(constantsDict['R10a']), float(constantsDict['R10t']) 
-        # Convert to concentrations
+
+      
         results = [scipyTools.fsolve(tools.spgr2d_func, x0=0, 
             args = (r1, FA, TR, R10a, baseline, Sa[p])) 
             for p in np.arange(0,len(t))]
 
+        #The following 3 lines of code are mandatory in order to 
+        #extract the result and message from fsolve
         R1a= [item[0] for item in results]
         messages = [item[1] for item in results]
         lastMessage = messages[len(messages)-1]
@@ -113,6 +117,7 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
     #try:
         #exceptionHandler.modelFunctionInfoLogger()
     try:
+        #mandatory global string variable
         global lastMessage
         lastMessage = ''
         t = inputData[:,0]
@@ -130,7 +135,8 @@ def HighFlowSingleInletGadoxetate3DSPGR_Rat(inputData,Ve, Kbh, Khe,constantsStri
         results = [scipyTools.fsolve(tools.spgr3d_func, x0=0, 
             args = (FA, TR, R10a, baseline, Sa[p])) 
             for p in np.arange(0,len(t))]
-
+        #The following 3 lines of code are mandatory in order to 
+        #extract the result and message from fsolve
         R1a= [item[0] for item in results]
         messages = [item[1] for item in results]
         lastMessage = messages[len(messages)-1]
@@ -306,4 +312,8 @@ def returnDataFileFolder():
 
 
 def returnSolverMessage():
+    """
+    This function is mandatory if fsolve is used to solve the mathematical model.  
+    It returns the last message from fsolve when the solution is complete
+    """
     return lastMessage
