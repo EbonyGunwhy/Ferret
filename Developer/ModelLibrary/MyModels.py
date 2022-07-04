@@ -313,7 +313,8 @@ def returnDataFileFolder():
 
 def returnSolverMessage():
     """
-    This function is mandatory if fsolve is used to solve the mathematical model.  
-    It returns the last message from fsolve when the solution is complete
+    This function is mandatory if fsolve is used to solve the mathematical model
+    and you wish to display the last message from fsolve on the GUI 
+    when the solution is complete.
     """
     return lastMessage
