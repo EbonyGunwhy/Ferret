@@ -135,7 +135,7 @@ In order to make a simple linear model available for use in Ferret, such as
    
 where a and b are parameters.
    
-the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 The first module import is mandatory for model definition.
@@ -238,10 +238,12 @@ will only be mandatory if you need to define model parameter(s).
                          modelFunction = straightLineModel,
                          parameterList = setUpParameterForStraightLineModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunction=None)
                      
             return [straightLine]
                      
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.
 The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class in your model library file and they return lists of parameters, variables and a constant respectively.
 
 4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters in your model library file.
@@ -287,7 +289,7 @@ $$y = ax^2 + bx + c$$
 where a and b are parameters and c is a constant.
    
 the following steps must be followed.
-The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
@@ -315,10 +317,12 @@ will only be mandatory if you need to define model parameter(s).
                          modelFunction = quadraticModel,
                          parameterList = setUpParametersForQuadraticModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunction=None)
                      
             return [quadratic]
-                     
+            
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.                     
 The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
 
 4. Write the function, **setUpParametersForQuadraticModel** to return a list of model parameters in your model library file.
@@ -414,9 +418,11 @@ constantsString = A string representation of a dictionary of constant name:value
                          modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
                          parameterList = setUpParameters(), 
                          constantsList = setUpConstants(),
-                         variablesList = setUpVariables())
+                         variablesList = setUpVariables(),
+                         returnMessageFunction=None)
                  return [HF1_2CFM_2DSPGR]
-    
+ 
+ The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.
 The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class in your model library file.
 **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
 respectively.
