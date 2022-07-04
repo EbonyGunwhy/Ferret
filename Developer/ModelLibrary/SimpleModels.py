@@ -181,7 +181,7 @@ def returnModelList():
                      modelFunction = linearModel,
                      parameterList = setUpParametersForLinearModel(), 
                      variablesList = setUpVariablesForAllModels(),
-                     returnMessageFunctionName=None
+                     returnMessageFunction=None
                      )
 
     straightLine = Model(shortName='Straight Line',
@@ -191,7 +191,7 @@ def returnModelList():
                          parameterList = setUpParameterForStraightLineModel(), 
                          variablesList = setUpVariablesForAllModels(),
                          constantsList = setUpConstantForYAxisIntersection(),
-                         returnMessageFunctionName=None)
+                         returnMessageFunction=None)
 
     quadratic = Model(shortName='Quadratic',
                          longName='Quadratic',
@@ -200,7 +200,7 @@ def returnModelList():
                          parameterList = setUpParametersForQuadraticModel(), 
                          variablesList = setUpVariablesForAllModels(),
                          constantsList = setUpConstantForYAxisIntersection(),
-                         returnMessageFunctionName=None)
+                         returnMessageFunction=None)
    
     return[linear, straightLine, quadratic]
 
