@@ -160,10 +160,12 @@ The first module import is mandatory for model definition.
                      xDataInputOnly = True,
                      modelFunction = linearModel,
                      parameterList = setUpParametersForLinearModel(), 
-                     variablesList = setUpVariablesForAllModels())
+                     variablesList = setUpVariablesForAllModels(),
+                     returnMessageFunction=None)
                      
             return [linear]
-                     
+            
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.                     
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
 4. Write the function, **setUpParametersForLinearModel** to return a list of model parameters in your model library file.
