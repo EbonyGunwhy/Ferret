@@ -150,7 +150,7 @@ The first module import is mandatory for model definition.
         def linearModel(inputData, a, b, constantsString=None):
              return np.multiply(inputData,a) + b
              
- The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
@@ -219,13 +219,15 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  
 
         import numpy as np
-        def straightLineModel(x, m, constantsString):
+        def straightLineModel(inputData, m, constantsString):
             constantsDict = eval(constantsString) 
             c = float(constantsDict['c'])
-            return np.multiply(x,m) + c
+            return np.multiply(inputData, m) + c
+            
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
@@ -294,14 +296,16 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  
 
        import numpy as np
-       def quadraticModel(x, a, b, constantsString):
+       def quadraticModel(inputData, a, b, constantsString):
             constantsDict = eval(constantsString) 
             c = float(constantsDict['c'])
-            return np.multiply((x**2),a) + np.multiply(x, b) + c
-         
+            return np.multiply((inputData**2),a) + np.multiply(inputData, b) + c
+ 
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+ 
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
         def returnModelList():
