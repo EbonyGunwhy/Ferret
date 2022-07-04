@@ -47,6 +47,8 @@ when a model object is created.
 
     variablesList - list of the variable objects that describe each of the variables
                 associated with the model. This argument is optional.
+                
+    returnMessageFunctionName - a function returning messages from the equation solving function passed into the model object as an object.
 
 ### Model Variable class
 The *ModelVariable* class has properties that are set by the following input arguments 
@@ -133,7 +135,7 @@ In order to make a simple linear model available for use in Ferret, such as
    
 where a and b are parameters.
    
-the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+the following steps must be followed. The full implementation of this model can be found in the file **Ferret\Developer\ModelLibrary\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 The first module import is mandatory for model definition.
@@ -142,11 +144,13 @@ The first module import is mandatory for model definition.
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
+2. Write a function that executes the mathematical model in your model library file. 
 
         import numpy as np
-        def linearModel(x, a, b, constantsString=None):
-             return np.multiply(x,a) + b
+        def linearModel(inputData, a, b, constantsString=None):
+             return np.multiply(inputData,a) + b
+             
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  In the case of this model, there are no constants, so it is set to **None**.
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
@@ -156,10 +160,12 @@ The first module import is mandatory for model definition.
                      xDataInputOnly = True,
                      modelFunction = linearModel,
                      parameterList = setUpParametersForLinearModel(), 
-                     variablesList = setUpVariablesForAllModels())
+                     variablesList = setUpVariablesForAllModels(),
+                     returnMessageFunction=None)
                      
             return [linear]
-                     
+            
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.                     
 The functions **setUpParametersForLinearModel** and  **setUpVariablesForAllModels** are defined outside the class and they return lists of parameters and variables respectively.
 
 4. Write the function, **setUpParametersForLinearModel** to return a list of model parameters in your model library file.
@@ -215,13 +221,15 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  
 
         import numpy as np
-        def straightLineModel(x, m, constantsString):
+        def straightLineModel(inputData, m, constantsString):
             constantsDict = eval(constantsString) 
             c = float(constantsDict['c'])
-            return np.multiply(x,m) + c
+            return np.multiply(inputData, m) + c
+            
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
          
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
@@ -232,10 +240,12 @@ will only be mandatory if you need to define model parameter(s).
                          modelFunction = straightLineModel,
                          parameterList = setUpParameterForStraightLineModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunction=None)
                      
             return [straightLine]
                      
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.
 The functions **setUpParameterForStraightLineModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class in your model library file and they return lists of parameters, variables and a constant respectively.
 
 4. Write the function, **setUpParameterForStraightLineModel** to return a list of model parameters in your model library file.
@@ -281,7 +291,7 @@ $$y = ax^2 + bx + c$$
 where a and b are parameters and c is a constant.
    
 the following steps must be followed.
-The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary*\SimpleModels.py**
+The full implementation of this model can be found in the file  **Ferret\Developer\ModelLibrary\SimpleModels.py**
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
@@ -290,14 +300,16 @@ will only be mandatory if you need to define model parameter(s).
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
 
-2. Write a function that executes the mathematical model in your model library file.  constantsString is a string representation of a Python dictionary of constant name:value pairs.  It is required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+2. Write a function that executes the mathematical model in your model library file.  
 
        import numpy as np
-       def quadraticModel(x, a, b, constantsString):
+       def quadraticModel(inputData, a, b, constantsString):
             constantsDict = eval(constantsString) 
             c = float(constantsDict['c'])
-            return np.multiply((x**2),a) + np.multiply(x, b) + c
-         
+            return np.multiply((inputData**2),a) + np.multiply(inputData, b) + c
+ 
+ The input argument **inputData** is used for the independent variable and its usuage is required to satisfy the needs of the curve fitting package used in Ferret.   **constantsString** is a string representation of a Python dictionary of constant name:value pairs.  It is also required to satisfy the needs of the curve fitting package used in Ferret.  The building of a string represention of a Python dictionary of constant name:value pairs is done by Ferret and you do not need to worry about this. However, you need to include code in your model function to unpack the value(s) of the constant(s).
+ 
  3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
         def returnModelList():
@@ -307,10 +319,12 @@ will only be mandatory if you need to define model parameter(s).
                          modelFunction = quadraticModel,
                          parameterList = setUpParametersForQuadraticModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunction=None)
                      
             return [quadratic]
-                     
+            
+The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.                     
 The functions **setUpParametersForQuadraticModel**,  **setUpVariablesForAllModels**  and **setUpConstantForYAxisIntersection** are defined outside the class and they return lists of parameters and variables respectively.
 
 4. Write the function, **setUpParametersForQuadraticModel** to return a list of model parameters in your model library file.
@@ -406,9 +420,11 @@ constantsString = A string representation of a dictionary of constant name:value
                          modelFunction = HighFlowSingleInletGadoxetate2DSPGR_Rat,
                          parameterList = setUpParameters(), 
                          constantsList = setUpConstants(),
-                         variablesList = setUpVariables())
+                         variablesList = setUpVariables(),
+                         returnMessageFunction=None)
                  return [HF1_2CFM_2DSPGR]
-    
+ 
+ The input argument **returnMessageFunction** is set to **None** because this function can be evaluated by substitution and the **fsolve** function in **Ferret\Developer\ModelLibrary\SupportModules\ScipyMathsTools.py** is not used.  **fsolve** returns messages on the progress of the solution to the GUI via the function name in **returnMessageFunction**.
 The functions **setUpParameters**, **setUpConstants** & **setUpVariables** are defined outside the class in your model library file.
 **setUpParameters**, **setUpConstants** &  **setUpVariables** return lists of parameter, constant & variable objects
 respectively.
