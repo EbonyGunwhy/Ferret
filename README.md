@@ -295,12 +295,11 @@ The full implementation of this model can be found in the file  **Ferret\Develop
 
 1. Place the following import statements at the top of your model library file.     
 These 3 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s). Additionally, *ScipyMathsTools* 
-will only be mandatory if you need to use the **fsolve** fuction to solve your mathematical model.
+will only be mandatory if you need to define model parameter(s). 
     
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
-        import SupportModules.ScipyMathsTools  as scipyTools
+        
 
 2. Write a function that executes the mathematical model in your model library file.  
 
@@ -379,10 +378,11 @@ The following steps must be followed.
 
 1. Place the following import statements at the top of your model library file.     
 These 2 module imports are mandatory for model definition. Although *LineColours*
-will only be mandatory if you need to define model parameter(s). *LineColours* provides an easy means of defining line style and colour when plotting variables on a graph.
+will only be mandatory if you need to define model parameter(s). *LineColours* provides an easy means of defining line style and colour when plotting variables on a graph. Additionally, *ScipyMathsTools* will only be mandatory if you need to use the **fsolve** fuction to solve your mathematical model.
     
         from SupportModules.Model import Model, ModelParameter, ModelConstant, ModelVariable 
         from SupportModules.GraphSupport import LineColours
+        import SupportModules.ScipyMathsTools  as scipyTools
 
 2. Write a function that executes the mathematical model in your model library file.  In order to comply with the needs
 of the curve fitting function, *CurveFit* in *FerretPlotData.py*, the input arguments of this function
@@ -414,6 +414,23 @@ constantsString = A string representation of a dictionary of constant name:value
                 float(constantsDict['R10a']), float(constantsDict['R10t'])  
 
 
+This function must contain the a global string variable initialised to a blank string; thus,
+        global lastMessage
+        lastMessage = ''
+        
+ScipyMathsTools.fsolve return the roots of a (non-linear) equation of the form  *func(x) = 0* given a starting estimate.  See this function's
+docstring for further details.  In this model function, its usuage takes the following form,
+
+        results = [scipyTools.fsolve(tools.spgr2d_func, x0=0, 
+            args = (r1, FA, TR, R10a, baseline, Sa[p])) 
+            for p in np.arange(0,len(t))]
+
+        #The following 3 lines of code are mandatory in order to 
+        #extract the result and message from fsolve
+        R1a= [item[0] for item in results]
+        messages = [item[1] for item in results]
+        lastMessage = messages[len(messages)-1]
+   
 
 3. Every model library file must have a **returnModelList** function.  Within the **returnModelList** function, define a model object to represent the above model.
  
@@ -490,7 +507,12 @@ respectively.
     FA takes an integer value in the range 10-30. It is represented on the GUI by a drop down list containing
     integers in the range 10-30 and it displays the default value of 20.
     
+7. Write the function **returnSolverMessage** to return the last message from fsolve to the GUI for display; thus,
 
+        def returnSolverMessage():
+            return lastMessage
+    
+    
 ### The function *returnDataFileFolder*
 This is a an optional function that returns the file path to the folder containing 
 CSV data files that form the input to Ferret. 
