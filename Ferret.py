@@ -981,6 +981,7 @@ class Ferret(QWidget):
                 self.statusBar.clearMessage()
             self.groupBoxModel.hide()
             self.groupBoxConstants.hide()
+            self.hideSolverMessage()
             self.groupBoxParameters.hide()
             self.deleteVariableWidgets()
             self.groupBoxExport.setExportGroupBoxVisible(False)

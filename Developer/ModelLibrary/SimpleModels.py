@@ -22,21 +22,21 @@ from SupportModules.GraphSupport import LineColours
 #*********************************************************************************
 #** Models
 #*********************************************************************************
-def quadraticModel(x, a, b, constantsString):
+def quadraticModel(inputData, a, b, constantsString):
     #y = ax^2 + bx + c
     constantsDict = eval(constantsString) 
     c = float(constantsDict['c'])
-    return np.multiply((x**2),a) + np.multiply(x, b) + c
+    return np.multiply((inputData**2),a) + np.multiply(inputData, b) + c
 
 
-def straightLineModel(x, m, constantsString):
+def straightLineModel(inputData, m, constantsString):
     constantsDict = eval(constantsString) 
     c = float(constantsDict['c'])
-    return np.multiply(x,m) + c
+    return np.multiply(inputData,m) + c
 
 
-def linearModel(x, a, b, constantsString=None):
-    return np.multiply(x,a) + b
+def linearModel(inputData, a, b, constantsString=None):
+    return np.multiply(inputData,a) + b
 
 #*******************************************************************************
 #** Define parameters for the model
@@ -180,7 +180,8 @@ def returnModelList():
                      xDataInputOnly = True,
                      modelFunction = linearModel,
                      parameterList = setUpParametersForLinearModel(), 
-                     variablesList = setUpVariablesForAllModels()
+                     variablesList = setUpVariablesForAllModels(),
+                     returnMessageFunctionName=None
                      )
 
     straightLine = Model(shortName='Straight Line',
@@ -189,7 +190,8 @@ def returnModelList():
                          modelFunction = straightLineModel,
                          parameterList = setUpParameterForStraightLineModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunctionName=None)
 
     quadratic = Model(shortName='Quadratic',
                          longName='Quadratic',
@@ -197,7 +199,8 @@ def returnModelList():
                          modelFunction = quadraticModel,
                          parameterList = setUpParametersForQuadraticModel(), 
                          variablesList = setUpVariablesForAllModels(),
-                         constantsList = setUpConstantForYAxisIntersection())
+                         constantsList = setUpConstantForYAxisIntersection(),
+                         returnMessageFunctionName=None)
    
     return[linear, straightLine, quadratic]
 
@@ -208,3 +211,4 @@ def returnDataFileFolder():
     CSV data files that form the input to Ferret.
     """
     return 'FerretData'
+

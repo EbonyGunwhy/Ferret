@@ -165,7 +165,8 @@ class FerretPlotData(LineGraph):
                 timeInputConcs2DArray = np.column_stack((arrayTimes, arrayModelInputSignals))
                     
             listModelConcentrations = modelFunction(timeInputConcs2DArray, *parameterArray, self._constantsString)
-            self.sigMessageReturnedFromSolver.emit(self._currentModelObject.returnMessageFunction())
+            if self._currentModelObject.returnMessageFunction is not None:
+                self.sigMessageReturnedFromSolver.emit(self._currentModelObject.returnMessageFunction())
             if listModelConcentrations is not None:
                 self.plotData(arrayTimes, listModelConcentrations, 
                                         lineStyle=LineColours.greenDashed, 
@@ -257,7 +258,10 @@ class FerretPlotData(LineGraph):
                                   params=modelParams, 
                                   inputData=timeInputConcs2DArray, 
                                   constantsString=self._constantsString)
-            self.sigMessageReturnedFromSolver.emit(self._currentModelObject.returnMessageFunction())
+
+            if self._currentModelObject.returnMessageFunction is not None:
+                self.sigMessageReturnedFromSolver.emit(self._currentModelObject.returnMessageFunction())
+
             self.sigCurveFittingComplete.emit(bestFitResults.best_values)
             QApplication.restoreOverrideCursor()
             logger.info('curveFit returned optimum parameters {}'

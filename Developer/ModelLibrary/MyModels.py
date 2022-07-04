@@ -282,7 +282,7 @@ def returnModelList():
                      parameterList = setUpParameters(), 
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables(),
-                     returnMessageFunction=returnSolverMessage
+                     returnMessageFunctionName=returnSolverMessage
                      )
       
         
@@ -292,7 +292,7 @@ def returnModelList():
                      parameterList = setUpParameters(),  
                      constantsList = setUpConstants(),
                      variablesList = setUpVariables(),
-                     returnMessageFunction=returnSolverMessage)
+                     returnMessageFunctionName=returnSolverMessage)
     
     return[HF1_2CFM_2DSPGR, HF1_2CFM_3DSPGR]
 
